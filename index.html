@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlockMySeat - Welcome</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="form.css">
+</head>
+<body>
+    <!-- Header Bar -->
+    <header class="main-header">
+        <div class="logo">BlockMySeat</div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="#">Movies</a></li>
+                <li><a href="#">Events</a></li>
+                <li><a href="#">Theatres</a></li>
+                <li><a href="#">Account</a></li>
+                <li><a href="#">Support</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="content-area">
+        <div class="form-container">
+            <!-- The capsule button for toggling modes -->
+            <div class="auth-toggle-container">
+                <div id="signin-toggle" class="toggle-option">Sign In</div>
+                <div id="signup-toggle" class="toggle-option">Sign Up</div>
+            </div>
+
+            <!-- The Form -->
+            <form id="auth-form" novalidate>
+                <div class="input-group" id="username-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+
+                <div class="input-group" id="email-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="input-group" id="password-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <div class="input-group" id="confirm-password-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required>
+                </div>
+
+                <div class="options-group" id="remember-me-group">
+                    <input type="checkbox" id="remember-me">
+                    <label for="remember-me">Remember Me</label>
+                </div>
+                
+                <p id="error-message"></p>
+
+                <button type="submit" id="submit-button">Sign In</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
