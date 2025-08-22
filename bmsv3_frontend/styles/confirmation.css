@@ -1,0 +1,100 @@
+/* Styles for the confirmation page */
+
+.confirmation-container {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 40px;
+    padding: var(--padding-main);
+    margin-top: 70px; /* Account for fixed header */
+    align-items: flex-start;
+}
+
+.summary-panel {
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    padding: var(--padding-main);
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+/* --- Left Column --- */
+.movie-summary #movie-poster {
+    width: 100%;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+}
+.movie-summary #movie-title {
+    font-size: 1.8em;
+    margin: 0 0 5px 0;
+}
+.movie-summary #venue-name {
+    font-size: 1.1em;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* --- Right Column --- */
+.booking-details h2 {
+    margin-top: 0;
+    font-size: 1.6em;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+.detail-item span {
+    color: var(--text-secondary);
+}
+.summary-divider {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 20px 0;
+}
+.total-price {
+    font-size: 1.4em;
+    font-weight: bold;
+}
+#confirm-booking-btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2em;
+    font-weight: bold;
+    background-color: var(--text-accent);
+    color: var(--bg-secondary);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    margin-top: 20px;
+    transition: opacity 0.2s;
+}
+#confirm-booking-btn:hover {
+    opacity: 0.9;
+}
+#confirm-booking-btn:disabled {
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    cursor: not-allowed;
+}
+#guest-blocker {
+    text-align: center;
+    padding: 20px;
+    background-color: color-mix(in srgb, var(--text-accent) 10%, var(--bg-tertiary));
+    border-radius: var(--border-radius);
+    margin-top: 20px;
+}
+#guest-blocker.hidden {
+    display: none;
+}
+.login-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: var(--text-accent);
+    color: var(--bg-secondary);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+}

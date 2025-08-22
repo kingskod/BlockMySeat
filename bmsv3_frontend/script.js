@@ -142,7 +142,9 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => response.json().then(data => ({ ok: response.ok, data })))
             .then(({ ok, data }) => {
                 if (ok) {
-                    // === MODIFICATION: REDIRECT ON SUCCESSFUL LOGIN ===
+                    // SAVE user info to sessionStorage
+                    sessionStorage.setItem('userToken', data.token);
+                    sessionStorage.setItem('userId', data.userId);
                     window.location.href = 'movies.html'; 
                 } else {
                     errorMessage.textContent = data.message;
