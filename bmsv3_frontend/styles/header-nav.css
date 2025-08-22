@@ -1,0 +1,63 @@
+/* This file styles the header inside the main content area */
+
+.main-header-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px; /* Add some horizontal padding */
+}
+
+/* --- Main Content Title --- */
+.main-content-title {
+    font-size: 1.8em;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* --- Header Actions (Search/Profile) --- */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* --- Search Bar --- */
+.search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-bar input {
+    width: 250px;
+    padding: 10px 40px 10px 15px; /* Space for the icon */
+    border: 2px solid var(--border-color);
+    border-radius: 50px; /* Pill shape */
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-family: var(--font-family-main);
+    font-size: 0.9em;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: var(--text-accent);
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.2); /* Using accent color with transparency */
+}
+
+.search-icon {
+    position: absolute;
+    right: 15px;
+    color: var(--text-secondary);
+}
+
+/* --- User Profile --- */
+.user-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
+    cursor: pointer;
+}

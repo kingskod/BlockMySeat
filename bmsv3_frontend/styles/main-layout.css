@@ -1,0 +1,41 @@
+/* This file controls the 3-column layout */
+
+.app-container {
+    display: grid;
+    /* Define the three columns: sidebar, main content, right panel */
+    grid-template-columns: 250px 1fr 300px; 
+    gap: 30px;
+    padding: var(--padding-main);
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.sidebar {
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    padding: var(--padding-main);
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.main-content {
+    /* This will be a flex container for its children */
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    overflow-y: auto; /* Allow scrolling if content is long */
+}
+
+.right-panel {
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    padding: var(--padding-main);
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+/* A simple class for sections within the main content */
+.movie-grid {
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    padding: var(--padding-main);
+    box-shadow: 0 4px 12px var(--shadow-color);
+}

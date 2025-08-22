@@ -1,0 +1,77 @@
+/* This file styles the left sidebar component */
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 40px; /* Space between logo, menu, and general sections */
+}
+
+/* --- Logo --- */
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-text {
+    font-size: var(--font-size-large);
+    margin: 0;
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+/* --- Navigation Sections --- */
+.sidebar-nav, .sidebar-general {
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-title {
+    font-size: var(--font-size-small);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+.sidebar-nav ul, .sidebar-general ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between menu items */
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 15px;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-link:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+/* Style for the currently active link */
+.nav-link.active {
+    background-color: var(--bg-tertiary);
+    color: var(--text-accent);
+    font-weight: bold;
+}
+
+.nav-link span {
+    font-size: 20px; /* Icon size */
+}
+
+/* Push the General section to the bottom */
+.sidebar-general {
+    margin-top: auto;
+}

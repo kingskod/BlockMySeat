@@ -1,0 +1,126 @@
+/* This file now styles the featured movie carousel */
+
+.featured-carousel-container {
+    position: relative;
+    height: 400px;
+    border-radius: var(--border-radius);
+    overflow: hidden; /* This is very important for the carousel effect */
+    box-shadow: 0 8px 20px var(--shadow-color);
+}
+
+.carousel-track {
+    position: relative;
+    height: 100%;
+    /* The track will be moved by JavaScript, so no flex/grid here */
+}
+
+.carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0; /* Hide all slides by default */
+    transition: opacity 0.5s ease-in-out;
+    
+    /* These are for the content inside the slide */
+    display: flex;
+    align-items: flex-end;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+/* The active slide is made visible */
+.carousel-slide.active {
+    opacity: 1;
+    z-index: 1;
+}
+
+/* --- Styles for content within a slide (mostly unchanged) --- */
+.featured-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.featured-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 10%, transparent 70%);
+    z-index: 2;
+}
+
+.featured-details {
+    position: relative;
+    z-index: 3;
+    color: #FFFFFF;
+}
+
+.featured-subtitle {
+    margin: 0;
+    font-size: 1em;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.featured-title {
+    margin: 10px 0 20px 0;
+    font-size: 3em;
+    font-weight: bold;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.featured-actions {
+    display: flex;
+    gap: 15px;
+}
+
+/* --- Button Styles (Unchanged) --- */
+.btn {
+    padding: 12px 25px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    font-family: var(--font-family-main);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); }
+.btn-primary { background-color: var(--text-accent); color: var(--bg-secondary); }
+.btn-secondary { background-color: rgba(255, 255, 255, 0.2); color: #FFFFFF; border: 1px solid rgba(255, 255, 255, 0.5); }
+
+
+/* --- Carousel Navigation Buttons --- */
+.carousel-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4; /* On top of everything */
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    font-size: 2em;
+    padding: 10px 15px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.carousel-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.carousel-button.prev {
+    left: 15px;
+}
+
+.carousel-button.next {
+    right: 15px;
+}

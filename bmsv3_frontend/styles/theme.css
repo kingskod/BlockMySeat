@@ -1,0 +1,56 @@
+/* This file controls all colors, fonts, and textures for the entire site */
+
+:root {
+    /* --- Fonts --- */
+    --font-family-main: 'Minecraft', sans-serif; /* You'll need to import a Minecraft font */
+    --font-size-normal: 16px;
+    --font-size-large: 24px;
+    --font-size-small: 14px;
+
+    /* --- Spacing & Borders --- */
+    --border-radius: 8px;
+    --padding-main: 20px;
+}
+
+/* === DAY MODE (Light Theme) === */
+.day-mode {
+    --bg-primary: #E0F2E9; /* Light, grassy green/blue */
+    --bg-secondary: #FFFFFF; /* White for cards/panels */
+    --bg-tertiary: #F0F0F0; /* Slightly off-white */
+    
+    --text-primary: #3A3A3A; /* Dark stone grey */
+    --text-secondary: #707070; /* Lighter grey */
+    --text-accent: #D97706; /* A warm, "torchlight" orange */
+
+    --border-color: #D1D5DB; /* Light grey border */
+    --shadow-color: rgba(0, 0, 0, 0.1);
+
+    /* Example of a texture */
+    --background-image: url('../images/dirt_background_day.png'); /* Placeholder */
+}
+
+/* === NIGHT MODE (Dark Theme) === */
+.night-mode {
+    --bg-primary: #1E293B; /* Deep, dark blue stone */
+    --bg-secondary: #334155; /* Darker grey for cards/panels */
+    --bg-tertiary: #475569; /* Lighter dark grey */
+
+    --text-primary: #E2E8F0; /* Light grey/white text */
+    --text-secondary: #94A3B8; /* Dimmer text */
+    --text-accent: #FBBF24; /* Bright, glowing yellow/gold */
+
+    --border-color: #475569;
+    --shadow-color: rgba(0, 0, 0, 0.4);
+
+    /* Example of a texture */
+    --background-image: url('../images/stone_background_night.png'); /* Placeholder */
+}
+
+/* Basic body setup to use the theme variables */
+body {
+    font-family: var(--font-family-main);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    margin: 0;
+    transition: background-color 0.3s, color 0.3s;
+}
