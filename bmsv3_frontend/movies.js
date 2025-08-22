@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // fetch movies type shi
-    
+
     const fetchMovies = async () => {
         try {
             const response = await fetch('http://12.0.0.1:18080/movies');
@@ -78,4 +78,36 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     fetchMovies();
+        const themeSwitch = document.getElementById('theme-checkbox');
+    const body = document.body;
+
+    // Function to apply the saved theme
+    const applyTheme = (theme) => {
+        if (theme === 'night') {
+            body.classList.remove('day-mode');
+            body.classList.add('night-mode');
+            themeSwitch.checked = true;
+        } else {
+            body.classList.remove('night-mode');
+            body.classList.add('day-mode');
+            themeSwitch.checked = false;
+        }
+    };
+
+    // Check for a saved theme in localStorage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    }
+
+    // Event listener for the toggle switch
+    themeSwitch.addEventListener('change', () => {
+        if (themeSwitch.checked) {
+            localStorage.setItem('theme', 'night');
+            applyTheme('night');
+        } else {
+            localStorage.setItem('theme', 'day');
+            applyTheme('day');
+        }
+    });
 });

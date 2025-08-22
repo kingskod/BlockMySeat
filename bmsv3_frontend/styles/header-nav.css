@@ -32,7 +32,7 @@
     width: 250px;
     padding: 10px 40px 10px 15px; /* Space for the icon */
     border: 2px solid var(--border-color);
-    border-radius: 50px; /* Pill shape */
+    border-radius: var(--border-radius); /* rectangular shape */
     background-color: var(--bg-tertiary);
     color: var(--text-primary);
     font-family: var(--font-family-main);
@@ -50,14 +50,4 @@
     position: absolute;
     right: 15px;
     color: var(--text-secondary);
-}
-
-/* --- User Profile --- */
-.user-profile img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--border-color);
-    cursor: pointer;
 }

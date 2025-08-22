@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // DOM Elements - The 'form' constant is now correctly defined here.
+    // DOM Elements
     const body = document.body;
-    const form = document.getElementById('auth-form'); // This was the crucial line.
+    const form = document.getElementById('auth-form');
     const submitButton = document.getElementById('submit-button');
     const errorMessage = document.getElementById('error-message');
 
@@ -24,38 +24,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const mode = urlParams.get('mode') === 'signup' ? 'signup' : 'signin';
 
     const setupMode = (currentMode) => {
-        errorMessage.textContent = ''; // Clear errors on mode switch
+        errorMessage.textContent = ''; 
 
         if (currentMode === 'signin') {
             body.className = 'signin-mode';
-            
-            // Configure UI
             signInToggle.classList.add('active');
             signUpToggle.classList.remove('active');
             submitButton.textContent = 'Sign In';
-
-            // Show/Hide Fields
             emailGroup.style.display = 'none';
             confirmPasswordGroup.style.display = 'none';
             rememberMeGroup.style.display = 'flex';
-            
-        } else { // signup mode
+        } else { 
             body.className = 'signup-mode';
-
-            // Configure UI
             signUpToggle.classList.add('active');
             signInToggle.classList.remove('active');
             submitButton.textContent = 'Create Account';
-
-            // Show/Hide Fields
             emailGroup.style.display = 'block';
             confirmPasswordGroup.style.display = 'block';
             rememberMeGroup.style.display = 'none';
         }
     };
-
-    // --- Event Listeners ---
-    // ... (keep all the code at the top of the file the same)
 
     // --- Event Listeners ---
     signInToggle.addEventListener('click', () => {
@@ -70,21 +58,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // THIS IS THE BLOCK TO REPLACE
+    // === NEW: GUEST LOGIN LOGIC ===
+    const guestMoviesLink = document.getElementById('guest-movies-link');
+    if (guestMoviesLink) {
+        guestMoviesLink.addEventListener('click', (event) => {
+            event.preventDefault(); // Stop the link from just adding '#' to the URL
+            // A "guest" login is just a direct redirect to the movies page.
+            window.location.href = 'movies.html';
+        });
+    }
+    // === END OF NEW LOGIC ===
+
     form.addEventListener('submit', (event) => {
         event.preventDefault(); 
         errorMessage.textContent = ''; 
-
         const serverUrl = 'http://127.0.0.1:18080';
 
         if (mode === 'signup') {
-            // --- Sign-Up Logic ---
             const username = document.getElementById('username').value;
             const email = emailInput.value;
             const password = passwordInput.value;
             const confirmPassword = confirmPasswordInput.value;
 
-            // --- Frontend Validation (keep this) ---
             if (!username || !email || !password || !confirmPassword) {
                 errorMessage.textContent = 'Please fill in all fields.';
                 return;
@@ -101,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 errorMessage.textContent = 'Passwords do not match.';
                 return;
             }
-            // --- End Validation ---
 
             fetch(serverUrl + '/signup', {
                 method: 'POST',
@@ -112,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(({ ok, data }) => {
                 if (ok) {
                     alert('Account created! Please sign in.');
-                    window.location.href = 'index.html'; // Go back to sign-in page
+                    window.location.href = 'index.html'; 
                 } else {
                     errorMessage.textContent = data.message;
                 }
@@ -122,8 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 errorMessage.textContent = 'Could not connect to the server.';
             });
             
-        } else {
-            // --- Sign-In Logic ---
+        } else { // Sign-In Logic
             const username = document.getElementById('username').value;
             const password = passwordInput.value;
 
@@ -140,9 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => response.json().then(data => ({ ok: response.ok, data })))
             .then(({ ok, data }) => {
                 if (ok) {
-                    alert('Login Successful!');
-                    // Redirect to a future movies page
-                    // window.location.href = 'movies.html'; 
+                    // === MODIFICATION: REDIRECT ON SUCCESSFUL LOGIN ===
+                    window.location.href = 'movies.html'; 
                 } else {
                     errorMessage.textContent = data.message;
                 }
@@ -153,8 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
-    
-// ... (keep the rest of the file, like validateEmail, the same)
     
     // --- Utility Functions ---
     const validateEmail = (email) => {

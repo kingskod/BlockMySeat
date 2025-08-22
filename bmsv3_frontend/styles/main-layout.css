@@ -1,12 +1,12 @@
-/* This file controls the 3-column layout */
+/* This file ONLY controls the main 2-column content area */
 
 .app-container {
     display: grid;
-    /* Define the three columns: sidebar, main content, right panel */
-    grid-template-columns: 250px 1fr 300px; 
+    /* A simple two-column layout for the sidebar and main content */
+    grid-template-columns: 250px 1fr; 
     gap: 30px;
     padding: var(--padding-main);
-    height: 100vh;
+    width: 100%;
     box-sizing: border-box;
 }
 
@@ -18,24 +18,9 @@
 }
 
 .main-content {
-    /* This will be a flex container for its children */
     display: flex;
     flex-direction: column;
     gap: 30px;
-    overflow-y: auto; /* Allow scrolling if content is long */
-}
-
-.right-panel {
-    background-color: var(--bg-secondary);
-    border-radius: var(--border-radius);
-    padding: var(--padding-main);
-    box-shadow: 0 4px 12px var(--shadow-color);
-}
-
-/* A simple class for sections within the main content */
-.movie-grid {
-    background-color: var(--bg-secondary);
-    border-radius: var(--border-radius);
-    padding: var(--padding-main);
-    box-shadow: 0 4px 12px var(--shadow-color);
+    /* This prevents the main area from creating its own scrollbar */
+    overflow: hidden; 
 }

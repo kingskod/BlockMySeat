@@ -1,4 +1,10 @@
 /* This file styles the movie card component and the grid it lives in */
+.movie-grid-container {
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    padding: var(--padding-main);
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
 
 /* --- Grid Container --- */
 .grid-header {
