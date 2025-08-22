@@ -2,7 +2,7 @@
 
 .featured-carousel-container {
     position: relative;
-    height: 400px;
+    height: 450px;
     border-radius: var(--border-radius);
     overflow: hidden; /* This is very important for the carousel effect */
     box-shadow: 0 8px 20px var(--shadow-color);

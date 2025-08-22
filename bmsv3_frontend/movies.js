@@ -67,7 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 newCard.querySelector('.card-title').textContent = movie.title;
                 newCard.querySelector('.card-rating').textContent = `⭐ ${movie.rating}`;
                 newCard.querySelector('.card-genre').textContent = `${movie.duration_minutes} min`;
-
+                newCard.addEventListener('click', () => {
+                    window.location.href = `movie-details.html?id=${movie.id}`;
+                });
                 movieGrid.appendChild(newCard);
             });
 

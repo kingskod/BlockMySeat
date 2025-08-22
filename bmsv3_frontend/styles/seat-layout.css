@@ -1,0 +1,123 @@
+.seating-page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--padding-main);
+    margin-top: 70px;
+}
+.seating-header {
+    margin-bottom: 20px;
+    text-align: center;
+}
+#movie-title-header {
+    font-size: 2em;
+    color: var(--text-primary);
+    margin: 0;
+}
+#selection-info-header {
+    font-size: 1em;
+    color: var(--text-secondary);
+}
+#screen {
+    order: 2; /* Move to bottom */
+    width: 80%;
+    max-width: 800px;
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    padding: 8px;
+    margin-top: 30px;
+    border-radius: 5px;
+    border-bottom: 5px solid var(--text-primary);
+    font-weight: bold;
+    text-align: center;
+}
+#theater-container {
+    display: flex; /* This makes the seat-blocks and passages align horizontally */
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+}
+.seat-block {
+    display: flex;
+    flex-direction: column; /* This makes the rows stack vertically */
+    gap: 5px;
+    align-items: center;
+}
+.seat-row-segment {
+    display: flex; /* This makes the seats inside a segment align horizontally */
+    gap: 5px;
+}
+.seat-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.row-letter {
+    width: 30px;
+    text-align: center;
+    font-weight: bold;
+    color: var(--text-secondary);
+    flex-shrink: 0; /* Prevent it from shrinking */
+}
+.passage {
+    width: 30px; /* This is the visual space for the passage */
+    flex-shrink: 0;
+}
+.seat {
+    width: 30px;
+    height: 30px;
+    background-color:#758780;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+.seat.premium {
+    width: 40px;
+    background-color: color-mix(in srgb, var(--text-accent) 20%, var(--bg-tertiary));
+}
+.seat.selected {
+    background-color: var(--text-accent);
+    transform: scale(1.1);
+}
+.seat.occupied {
+    background-color: #6b7280;
+    cursor: not-allowed;
+}
+.legend {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9em;
+}
+.seat-example {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+}
+#checkout-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--text-accent);
+    color: var(--bg-secondary);
+    border: none;
+    font-size: 1.8em;
+    cursor: pointer;
+    box-shadow: 0 5px 15px var(--shadow-color);
+    transition: transform 0.2s, opacity 0.3s;
+    transform: scale(0);
+    opacity: 0;
+}
+#checkout-btn.visible {
+    transform: scale(1);
+    opacity: 1;
+}

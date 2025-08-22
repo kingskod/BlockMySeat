@@ -1,0 +1,64 @@
+#guest-prompt-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    transition: opacity 0.3s ease;
+}
+#guest-prompt-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+#guest-prompt {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    padding: 30px 40px;
+    border-radius: var(--border-radius);
+    text-align: center;
+    box-shadow: 0 10px 30px var(--shadow-color);
+}
+#guest-count-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 25px 0;
+}
+.guest-count-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    background-color: transparent;
+    color: var(--text-primary);
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+.guest-count-btn.selected {
+    background-color: var(--text-accent);
+    color: var(--bg-secondary);
+    border-color: var(--text-accent);
+    transform: scale(1.1);
+    font-weight: bold;
+}
+.prompt-buttons button {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    margin: 0 10px;
+}
+#proceed-btn {
+    background-color: var(--text-accent);
+    color: var(--bg-secondary);
+    border-color: var(--text-accent);
+}

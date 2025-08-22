@@ -1,0 +1,81 @@
+/* This file styles the venue+showtimes list item on the details page */
+
+.venue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.venue-showtime-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.venue-image {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    flex-shrink: 0;
+}
+
+.venue-main-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.venue-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.venue-name {
+    margin: 0;
+    font-size: 1.4em;
+    color: var(--text-primary);
+}
+
+.venue-rating {
+    color: var(--text-accent);
+    font-size: 1.1em;
+    flex-shrink: 0; /* Prevent rating from wrapping */
+    margin-left: 20px; /* Add space between name and rating */
+}
+
+.venue-divider {
+    width: 100%;
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 15px 0; /* Space above and below the line */
+}
+
+.venue-timings {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.time-btn {
+    padding: 8px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: transparent;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.time-btn:hover {
+    background-color: var(--text-accent);
+    color: var(--bg-secondary);
+    border-color: var(--text-accent);
+}
