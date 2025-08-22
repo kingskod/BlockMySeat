@@ -1,0 +1,149 @@
+.form-container {
+    width: 400px;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Mode-specific container colors */
+.signin-mode .form-container {
+    background-color: var(--signin-container-bg);
+}
+.signup-mode .form-container {
+    background-color: var(--signup-container-bg);
+}
+
+/* --- Auth Toggle Capsule Button --- */
+.auth-toggle-container {
+    display: flex;
+    border-radius: 50px; /* Outer capsule */
+    padding: 5px;
+    margin-bottom: 30px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.signin-mode .auth-toggle-container {
+    background-color: var(--signin-input-bg);
+    border: 1px solid var(--signin-input-border);
+}
+
+.signup-mode .auth-toggle-container {
+    background-color: var(--signup-input-bg);
+    border: 1px solid var(--signup-input-border);
+}
+
+.toggle-option {
+    flex: 1;
+    text-align: center;
+    padding: 10px 0;
+    border-radius: 50px; /* Inner capsule */
+    z-index: 1;
+    transition: color 0.3s ease-in-out;
+    font-weight: 500;
+}
+
+/* Inactive (Greyed Out) State */
+.signin-mode .toggle-option { color: var(--signin-secondary-text); }
+.signup-mode .toggle-option { color: var(--signup-secondary-text); }
+
+/* Active State */
+.signin-mode .toggle-option.active { color: #FFFFFF; background-color: var(--signin-accent); }
+.signup-mode .toggle-option.active { color: #FFFFFF; background-color: var(--signup-accent); }
+
+/* --- Form Fields --- */
+.input-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 0.9em;
+}
+
+.input-group input[type="text"],
+.input-group input[type="email"],
+.input-group input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid;
+    font-size: 1em;
+    box-sizing: border-box; /* Important for width */
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Mode-specific input styles */
+.signin-mode .input-group input {
+    background-color: var(--signin-input-bg);
+    border-color: var(--signin-input-border);
+    color: var(--signin-primary-text);
+}
+.signup-mode .input-group input {
+    background-color: var(--signup-input-bg);
+    border-color: var(--signup-input-border);
+    color: var(--signup-primary-text);
+}
+
+.signin-mode .input-group input:focus {
+    outline: none;
+    border-color: var(--signin-accent);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
+}
+.signup-mode .input-group input:focus {
+    outline: none;
+    border-color: var(--signup-accent);
+    box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.3);
+}
+
+/* Checkbox */
+.options-group {
+    display: flex;
+    align-items: center;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+.options-group label {
+    margin-left: 8px;
+    font-size: 0.9em;
+}
+
+/* Submit Button */
+#submit-button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+#submit-button:hover {
+    opacity: 0.9;
+}
+
+#submit-button:active {
+    transform: scale(0.98);
+}
+
+.signin-mode #submit-button { background-color: var(--signin-accent); }
+.signup-mode #submit-button { background-color: var(--signup-accent); }
+
+/* Error Message */
+#error-message {
+    color: #e74c3c;
+    font-weight: bold;
+    min-height: 1.2em;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
