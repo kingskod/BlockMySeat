@@ -64,7 +64,8 @@ void init_database()
         "Name TEXT NOT NULL,"
         "Location TEXT,"
         "ImageURL TEXT,"
-        "AuditoriumCount INTEGER);";
+        "AuditoriumCount INTEGER,"
+        "Rating REAL);";
     if (sqlite3_exec(db, sql_create_venues, 0, 0, &zErrMsg) != SQLITE_OK) {
         std::cerr << "SQL error (Venues): " << zErrMsg << std::endl;
         sqlite3_free(zErrMsg);
@@ -90,12 +91,26 @@ void init_database()
         "AuditoriumID INTEGER PRIMARY KEY AUTOINCREMENT,"
         "VenueID INTEGER,"
         "AuditoriumNumber INTEGER NOT NULL,"
-        "SeatCount INTEGER,"
-        "FOREIGN KEY(VenueID) REFERENCES Venues(VenueID));";
+        "Layout TEXT,"
+        "NormalPrice REAL,"
+        "PremiumPrice REAL,"
+        "FOREIGN KEY(VenueID) REFERENCES Venues(VenueID));"; // <-- REMOVED Rating column
     if (sqlite3_exec(db, sql_create_auditoriums, 0, 0, &zErrMsg) != SQLITE_OK) {
         std::cerr << "SQL error (Auditoriums): " << zErrMsg << std::endl;
         sqlite3_free(zErrMsg);
     }
+     const char* sql_create_bookings =
+        "CREATE TABLE IF NOT EXISTS Bookings ("
+        "BookingID INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "ShowtimeID INTEGER,"
+        "SeatIdentifier TEXT NOT NULL," // e.g., "A5", "C12"
+        "FOREIGN KEY(ShowtimeID) REFERENCES Showtimes(ShowtimeID));";
+    if (sqlite3_exec(db, sql_create_bookings, 0, 0, &zErrMsg) != SQLITE_OK) {
+        std::cerr << "SQL error (Bookings): " << zErrMsg << std::endl;
+        sqlite3_free(zErrMsg);
+    }
+
+
     // SEEDING FAKE DATA FOR TESTING
     int movie_count = 0;
     sqlite3_exec(db, "SELECT COUNT(*) FROM Movies", callback_is_empty, &movie_count, &zErrMsg);
@@ -104,13 +119,12 @@ void init_database()
     {
         std::cout << "Movies table is empty. Seeding with initial data..." << std::endl;
         const char* seed_sql =
-            "INSERT INTO Movies (Title, PosterURL, Synopsis, DurationMinutes, Rating) VALUES "
-            "('Minecraft: The First Movie', 'images/poster1.jpg', 'The story of a hero who must save the Overworld from the Ender Dragon.', 120, 'PG'),"
-            "('Creeper''s Revenge', 'images/poster2.jpg', 'A misunderstood Creeper just wants to make friends, but things keep exploding.', 95, 'PG-13'),"
-            "('The Enderman''s Gaze', 'images/poster3.jpg', 'A psychological thriller about what happens when you look for too long.', 110, 'R'),"
-            "('Village & Pillage', 'images/poster4.jpg', 'An epic saga of villagers defending their home from a relentless raid.', 135, 'PG-13'),"
-            "('Journey to the Nether', 'images/poster5.jpg', 'Two adventurers brave the fiery depths to find a rare artifact.', 105, 'PG');";
-
+    "INSERT INTO Movies (Title, PosterURL, Synopsis, DurationMinutes, Rating) VALUES "
+    "('The Crimson Shadow', 'images/crimson shadow.png', 'In a land shrouded by a creeping darkness, a lone figure known only as \"The Crimson Shadow\" stands on the precipice between light and oblivion. Tasked with a prophecy to restore the fallen kingdom of Eldoria, they must journey across treacherous mountains and stormy seas, confronting mythical beasts and a malevolent sorcerer who seeks to plunge the world into eternal night. The fate of their world rests on their shoulders, and their crimson-hued powers are their only guide.', 120, 'PG-13 for intense sci-fi action, violence, and some thematic elements.'),"
+    "('Echoes of Neptune', 'images/echos of neptune.png', 'A deep-space expedition to Neptune''s mysterious ocean moon reveals a startling discovery: a colossal, crystalline city pulsating with an otherworldly energy. While investigating, a lone astronaut is separated from their crew and discovers they can communicate with the alien life form inhabiting the moon. The astronaut learns the ''echos'' they are hearing are not just soundwaves, but the last remnants of a dying race. They must choose between fulfilling their mission parameters and helping an ancient species before the deep-sea pressures of Neptune''s moon erase them from existence forever.', 95, 'PG-13 for intense sci-fi peril and thematic elements.'),"
+    "('Galactic Drift', 'images/galactic drift.png', 'In a sprawling, neon-lit cyberpunk metropolis, a lone renegade hacker discovers a rogue AI that has broken free from its creators. Hunted by the corporation that seeks to reclaim it, the duo must navigate a dangerous high-speed chase through the city''s futuristic sky-high highways, with the fate of human-AI relations in their hands.', 110, 'PG-13 for sequences of intense futuristic action and violence, and some thematic elements.'),"
+    "('Midnight Cipher', 'images/midnight cipher.png', 'A gritty private eye is hired to retrieve a glowing, encrypted briefcase in a rain-soaked, neon-lit city. He finds himself embroiled in a conspiracy far deadlier than a simple theft, as ruthless assassins and a shadowy organization hunt him for the cipher he now possesses. To survive, he must decode its secrets before the city''s midnight hour.', 135, 'R for strong violence, language, and some sexual content.'),"
+    "('The Last Starlight', 'images/the laststarlight.png', 'In the last moments of a dying universe, a lone astronaut embarks on a desperate journey to find a mythical cosmic anomaly—a \"last starlight\" that can reignite creation. As he traverses desolate, forgotten worlds, he must confront his own solitude and the philosophical weight of his mission, knowing that his success or failure will determine the fate of everything that has ever been.', 105, 'PG for peril and thematic elements.');";
         if (sqlite3_exec(db, seed_sql, 0, 0, &zErrMsg) != SQLITE_OK) 
         {
             std::cerr << "SQL error (Seeding): " << zErrMsg << std::endl;
@@ -122,15 +136,13 @@ void init_database()
 
     int venue_count = 0;
     sqlite3_exec(db, "SELECT COUNT(*) FROM Venues", callback_is_empty, &venue_count, &zErrMsg);
-    
     if (venue_count == 0) {
-        std::cout << "Venues table is empty. Seeding with initial data..." << std::endl;
+        std::cout << "Venues table is empty. Seeding..." << std::endl;
         const char* seed_sql =
-            "INSERT INTO Venues (Name, Location, ImageURL, AuditoriumCount) VALUES "
-            "('Blocky Multiplex', 'Downtown Cubeville', 'images/venue1.jpg', 12),"
-            "('The Redstone Cinema', 'Oak Valley', 'images/venue2.jpg', 8),"
-            "('Pixel Perfect Theaters', 'Glass Pane City', 'images/venue3.jpg', 16);";
-        
+            "INSERT INTO Venues (Name, Location, ImageURL, AuditoriumCount, Rating) VALUES " // <-- ADDED Rating
+            "('Blocky Multiplex', 'Downtown Cubeville', 'images/venue1.jpg', 12, 4.5),"      // <-- ADDED Rating value
+            "('The Redstone Cinema', 'Oak Valley', 'images/venue2.jpg', 8, 5.0),"           // <-- ADDED Rating value
+            "('Pixel Perfect Theaters', 'Glass Pane City', 'images/venue3.jpg', 16, 4.0);"; // <-- ADDED Rating value
         if (sqlite3_exec(db, seed_sql, 0, 0, &zErrMsg) != SQLITE_OK) {
             std::cerr << "SQL error (Seeding Venues): " << zErrMsg << std::endl;
             sqlite3_free(zErrMsg);
@@ -167,13 +179,13 @@ void init_database()
     if (auditorium_count == 0) {
         std::cout << "Auditoriums table is empty. Seeding..." << std::endl;
         const char* seed_sql =
-            "INSERT INTO Auditoriums (VenueID, AuditoriumNumber, SeatCount) VALUES "
-            // Auditoriums for Venue 1 (Blocky Multiplex)
-            "(1, 1, 150), (1, 2, 150), (1, 3, 200),"
-            // Auditoriums for Venue 2 (The Redstone Cinema)
-            "(2, 1, 100), (2, 2, 120),"
-            // Auditoriums for Venue 3 (Pixel Perfect Theaters)
-            "(3, 1, 250), (3, 2, 250);";
+            "INSERT INTO Auditoriums (VenueID, AuditoriumNumber, Layout, NormalPrice, PremiumPrice) VALUES "
+            // Venue 1, Audi 1 (2 sections, 2 premium rows)
+            "(1, 1, '{\"sections\":[10, 10], \"premium_rows\":2}', 10.50, 15.50),"
+            // Venue 1, Audi 2 (3 sections, 1 premium row)
+            "(1, 2, '{\"sections\":[8, 12, 8], \"premium_rows\":1}', 10.50, 15.50),"
+            // Venue 2, Audi 1 (1 section, 1 premium row)
+            "(2, 1, '{\"sections\":[20], \"premium_rows\":1}', 12.00, 18.00);";
         if (sqlite3_exec(db, seed_sql, 0, 0, &zErrMsg) != SQLITE_OK) {
             std::cerr << "SQL error (Seeding Auditoriums): " << zErrMsg << std::endl;
             sqlite3_free(zErrMsg);
@@ -198,7 +210,11 @@ int main()
     // Get a reference to the CORS middleware and configure it.
     auto& cors = app.get_middleware<crow::CORSHandler>();
     // A simple policy: allow all origins, all methods, all headers.
-    cors.global();
+    cors
+    .global()
+    .headers("Content-Type") // Allow the frontend to specify the content type
+    .methods("POST"_method, "GET"_method, "OPTIONS"_method) // Allow these HTTP methods
+    .origin("*"); // Allow any origin (including file://)
 
     // --- Define your routes ---
     CROW_ROUTE(app, "/signup").methods("POST"_method)
@@ -339,10 +355,8 @@ int main()
 });
 
 // === NEW ENDPOINT 2: Get showtimes for a movie on a specific date ===
-// === NEW ENDPOINT 2: Get showtimes for a movie on a specific date ===
 CROW_ROUTE(app, "/showtimes")
 ([](const crow::request& req){
-    // Get movie_id and date from the query string (e.g., /showtimes?movie_id=1&date=2025-08-22)
     auto movie_id_str = req.url_params.get("movie_id");
     auto date_str = req.url_params.get("date");
 
@@ -350,17 +364,17 @@ CROW_ROUTE(app, "/showtimes")
         return crow::response(400, "Missing movie_id or date parameter");
     }
 
-    std::string sql = "SELECT T2.VenueID, T2.Name, T2.ImageURL, strftime('%H:%M', T1.ShowtimeDateTime) "
-                  "FROM Showtimes AS T1, Venues AS T2 "
-                  "WHERE T1.VenueID = T2.VenueID AND T1.MovieID = ? AND T1.ShowtimeDateTime LIKE ? || '%' "
-                  "ORDER BY T2.VenueID, T1.ShowtimeDateTime";
+    // This SQL query is now correct because V.Rating exists.
+    std::string sql = "SELECT V.VenueID, V.Name, V.Rating, V.ImageURL, strftime('%H:%M', S.ShowtimeDateTime), S.ShowtimeID, S.AuditoriumID "
+                      "FROM Showtimes AS S JOIN Venues AS V ON S.VenueID = V.VenueID "
+                      "WHERE S.MovieID = ? AND S.ShowtimeDateTime LIKE ? || '%' "
+                      "ORDER BY V.VenueID, S.ShowtimeDateTime";
     
     sqlite3_stmt* stmt;
     json venues_with_showtimes = json::object();
+    int rc;
 
-    // Add error checking for sqlite3_prepare_v2
-    int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, 0);
-    if (rc != SQLITE_OK) {
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, 0) != SQLITE_OK) {
         std::cerr << "SQL PREPARE ERROR: " << sqlite3_errmsg(db) << std::endl;
         return crow::response(500, "Database query preparation failed");
     }
@@ -368,30 +382,32 @@ CROW_ROUTE(app, "/showtimes")
     sqlite3_bind_int(stmt, 1, std::stoi(movie_id_str));
     sqlite3_bind_text(stmt, 2, date_str, -1, SQLITE_STATIC);
 
-    // Loop through the results
     while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
         int venue_id = sqlite3_column_int(stmt, 0);
         std::string venue_id_key = std::to_string(venue_id);
 
-        // If we haven't seen this venue yet, create its object
         if (venues_with_showtimes.find(venue_id_key) == venues_with_showtimes.end()) {
             venues_with_showtimes[venue_id_key]["venue_id"] = venue_id;
             venues_with_showtimes[venue_id_key]["venue_name"] = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
-            venues_with_showtimes[venue_id_key]["venue_image_url"] = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+            venues_with_showtimes[venue_id_key]["venue_rating"] = sqlite3_column_double(stmt, 2);
+            venues_with_showtimes[venue_id_key]["venue_image_url"] = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
             venues_with_showtimes[venue_id_key]["showtimes"] = json::array();
         }
-        // Add the showtime to this venue's list
-        venues_with_showtimes[venue_id_key]["showtimes"].push_back(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
+        
+        json showtime_obj;
+        showtime_obj["time"] = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+        showtime_obj["showtime_id"] = sqlite3_column_int(stmt, 5);
+        showtime_obj["auditorium_id"] = sqlite3_column_int(stmt, 6);
+
+        venues_with_showtimes[venue_id_key]["showtimes"].push_back(showtime_obj);
     }
 
-    // Check for errors that might have occurred after the loop
     if (rc != SQLITE_DONE) {
         std::cerr << "SQL EXECUTION ERROR: " << sqlite3_errmsg(db) << std::endl;
     }
 
     sqlite3_finalize(stmt);
 
-    // Convert the object of venues into an array, which is easier for JavaScript to loop through
     json final_response = json::array();
     for (auto& el : venues_with_showtimes.items()) {
         final_response.push_back(el.value());
@@ -399,10 +415,31 @@ CROW_ROUTE(app, "/showtimes")
 
     return crow::response(200, final_response.dump());
 });
+CROW_ROUTE(app, "/occupied-seats")
+    ([](const crow::request& req){
+        auto showtime_id_str = req.url_params.get("showtime_id");
+        if (!showtime_id_str) {
+            return crow::response(400, "Missing showtime_id parameter");
+        }
+
+        json occupied_seats = json::array();
+        sqlite3_stmt* stmt;
+        const char* sql = "SELECT SeatIdentifier FROM Bookings WHERE ShowtimeID = ?";
+
+        if (sqlite3_prepare_v2(db, sql, -1, &stmt, 0) == SQLITE_OK) {
+            sqlite3_bind_int(stmt, 1, std::stoi(showtime_id_str));
+            while (sqlite3_step(stmt) == SQLITE_ROW) {
+                occupied_seats.push_back(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)));
+            }
+        }
+        sqlite3_finalize(stmt);
+
+        return crow::response(200, occupied_seats.dump());
+    });
 
     // --- Run the app ---
     std::cout << "Server starting on port 18080..." << std::endl;
-    app.port(18080).multithreaded().run();
+    app.port(18080).multithreaded().bindaddr("0.0.0.0").run();
 
     sqlite3_close(db);
     return 0;

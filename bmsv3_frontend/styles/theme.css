@@ -14,20 +14,18 @@
 
 /* === DAY MODE (Light Theme) === */
 .day-mode {
-    --bg-primary: #E0F2E9; /* Light, grassy green/blue */
-    --bg-secondary: #FFFFFF; /* White for cards/panels */
-    --bg-tertiary: #F0F0F0; /* Slightly off-white */
+    --bg-primary: #E0F2E9;
+    --bg-secondary: #FFFFFF;
+    --bg-tertiary: #E5E7EB; 
     
-    --text-primary: #3A3A3A; /* Dark stone grey */
-    --text-secondary: #707070; /* Lighter grey */
-    --text-accent: #D97706; /* A warm, "torchlight" orange */
+    --text-primary: #3A3A3A;
+    --text-secondary: #707070;
+    --text-accent: #D97706;
 
-    --border-color: #D1D5DB; /* Light grey border */
+    --border-color: #D1D5DB;
     --shadow-color: rgba(0, 0, 0, 0.1);
-
-    /* Example of a texture */
-    --background-image: url('../images/dirt_background_day.png'); /* Placeholder */
 }
+/* === DAY MODE (Light Theme) === */
 
 /* === NIGHT MODE (Dark Theme) === */
 .night-mode {
@@ -53,4 +51,7 @@ body {
     color: var(--text-primary);
     margin: 0;
     transition: background-color 0.3s, color 0.3s;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>BlockMySeat - Select Seats</title>
+    
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/global-header.css">
+    <link rel="stylesheet" href="styles/seat-layout.css">
+    <link rel="stylesheet" href="styles/guest-prompt.css">
+    
+    <script src="https://kit.fontawesome.com/YOUR_KIT_CODE.js" crossorigin="anonymous"></script>
+</head>
+<body class="day-mode">
+
+    <!-- 1. Global Header -->
+    <header class="global-header">
+    <div class="header-left">
+        <div class="header-logo">
+            <span class="logo-text">BlockMySeat</span>
+        </div>
+        <!-- Dark Mode Toggle is now here -->
+        <div class="theme-switch-wrapper">
+            <label class="theme-switch" for="theme-checkbox">
+                <input type="checkbox" id="theme-checkbox" />
+                <div class="slider round"></div>
+            </label>
+        </div>
+    </div>
+    <div class="search-bar">
+        <input type="text" placeholder="Search...">
+        <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+    </div>
+    <div class="header-right">
+        <div class="theme-toggle" id="theme-toggle">
+            <div class="toggle-indicator"></div>
+        </div>
+        <nav class="global-nav">
+            <a href="movies.html">Movies</a>
+            <a href="venues.html">Venues</a>
+            <a href="#">Bookings</a>
+        </nav>
+        <div class="header-profile">
+            <img src="images/user-avatar.png" alt="User Avatar">
+        </div>
+    </div>
+</header>
+
+    <!-- 2. Main Seat Selection Container -->
+    <div class="seating-page-container">
+        <div class="seating-header">
+            <h1 id="movie-title-header">Loading Movie...</h1>
+            <h2 id="selection-info-header">Loading Details...</h2>
+        </div>
+
+        <div id="screen">SCREEN THIS WAY</div>
+
+        <div id="theater-container">
+            <!-- Seat layout will be generated here by JS -->
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><div class="seat-example premium"></div> Premium</div>
+            <div class="legend-item"><div class="seat-example normal"></div> Normal</div>
+            <div class="legend-item"><div class="seat-example selected"></div> Selected</div>
+            <div class="legend-item"><div class="seat-example occupied"></div> Occupied</div>
+        </div>
+    </div>
+
+    <!-- Guest Prompt Overlay -->
+    <div id="guest-prompt-overlay">
+        <div id="guest-prompt">
+            <h3>How many seats?</h3>
+            <div id="guest-count-container">
+                <!-- Guest count buttons will be generated here -->
+            </div>
+            <div class="prompt-buttons">
+                <button id="go-back-btn">Go Back</button>
+                <button id="proceed-btn">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Proceed to Checkout Button (Initially Hidden) -->
+    <button id="checkout-btn" class="hidden">
+        <i class="fa-solid fa-arrow-right"></i>
+    </button>
+
+    <script src="seats.js"></script>
+</body>
+</html>

@@ -110,10 +110,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const timingsContainer = newItem.querySelector('.venue-timings');
                 timingsContainer.innerHTML = ''; // Clear any template buttons
-                venue.showtimes.forEach(time => {
+                venue.showtimes.forEach(showtime => {
                     const timeButton = document.createElement('button');
+                    const selectedDate = document.querySelector('.date-item.active').dataset.date;
                     timeButton.className = 'time-btn';
-                    timeButton.textContent = time;
+                    timeButton.textContent = showtime.time;
+
+                    // Add event listener to redirect to seats.html with parameters
+                    timeButton.addEventListener('click', () => {
+                        const params = new URLSearchParams({
+                            movie: encodeURIComponent(movieTitle.textContent),
+                            showtime_id: showtime.showtime_id,
+                            auditorium_id: showtime.auditorium_id,
+                            date: selectedDate,
+                            time: showtime.time
+                        });
+                        window.location.href = `seats.html?${params.toString()}`;
+                    });
+
                     timingsContainer.appendChild(timeButton);
                 });
 
