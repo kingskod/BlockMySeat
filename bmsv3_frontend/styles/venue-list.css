@@ -1,0 +1,66 @@
+/* This file styles the venue list and its items */
+
+.venue-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between each venue item */
+}
+
+.venue-item {
+    display: grid;
+    grid-template-columns: 220px 1fr auto; /* Image | Details | Info */
+    align-items: center;
+    gap: 30px; /* Increased gap for more space */
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    padding: 25px; /* Increased padding for more space */
+    box-shadow: 0 4px 12px var(--shadow-color);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+
+.venue-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px var(--shadow-color);
+}
+
+.venue-image {
+    width: 220px; /* Increased width */
+    height: 140px; /* Increased height to make it taller */
+    object-fit: cover;
+    border-radius: var(--border-radius);
+}
+
+.venue-details {
+    flex-grow: 1; /* This makes the details section take up all available space */
+}
+
+.venue-name {
+    margin: 0 0 10px 0;
+    font-size: 1.6em;
+    color: var(--text-primary);
+}
+
+.venue-location {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 1em;
+}
+
+.venue-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: var(--text-primary);
+}
+
+.venue-auditoriums {
+    font-weight: 500;
+}
+
+/* Re-using the button style from the featured banner */
+.venue-item .btn {
+    padding: 10px 20px;
+    font-size: 0.9em;
+}

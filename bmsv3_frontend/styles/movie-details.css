@@ -1,0 +1,79 @@
+/* This file styles the main layout of the movie-details page */
+
+.details-page-container {
+    display: grid;
+    /* --- SWAP THE COLUMNS --- */
+    /* The fixed panel is now on the LEFT, and the main content is on the RIGHT */
+    grid-template-columns: 380px 1fr; 
+    gap: 40px;
+    padding: var(--padding-main);
+    margin-top: 70px; 
+    align-items: start; /* Ensure proper alignment */
+}
+
+/* --- Main Scrolling Content (Left) --- */
+.showtimes-content {
+    /* This rule is new to specify its grid position */
+    grid-column: 2 / 3; 
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: stretch; /* Ensure venue cards stretch properly */
+}
+
+.dates-bar {
+    display: flex;
+    gap: 10px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border-color);
+    overflow-x: auto;
+}
+/* ... (date-item styles are the same as before) ... */
+.date-item { display: flex; flex-direction: column; align-items: center; padding: 10px 15px; border-radius: var(--border-radius); cursor: pointer; border: 2px solid transparent; transition: background-color 0.2s, border-color 0.2s; }
+.date-item:hover { background-color: var(--bg-tertiary); }
+.date-item.active { background-color: var(--bg-tertiary); border-color: var(--text-accent); }
+.date-day { font-size: 0.9em; font-weight: 500; color: var(--text-secondary); }
+.date-number { font-size: 1.5em; font-weight: bold; color: var(--text-primary); }
+
+
+/* --- Fixed Movie Info Panel (Right) --- */
+.movie-info-panel-fixed {
+    /* This rule is new to specify its grid position */
+    grid-column: 1 / 2; 
+    position: sticky;
+    top: 90px;
+    height: calc(100vh - 110px);
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 12px var(--shadow-color);
+    align-self: start; /* Ensure movie details align properly */
+}
+
+#movie-poster {
+    width: 100%;
+    /* --- ENLARGE THE POSTER --- */
+    height: 500px; /* Increased from 450px */
+    object-fit: cover;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.movie-info-details {
+    padding: var(--padding-main);
+}
+
+#movie-title {
+    font-size: 2em;
+    color: var(--text-primary);
+    margin: 0 0 10px 0;
+}
+.info-meta {
+    display: flex;
+    gap: 15px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+#movie-synopsis {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}

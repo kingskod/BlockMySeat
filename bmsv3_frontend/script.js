@@ -67,6 +67,15 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = 'movies.html';
         });
     }
+    // === NEW: GUEST VENUES LOGIC=== 
+    const guestVenuesLink = document.getElementById('guest-venues-link');
+    if (guestVenuesLink) {
+        guestVenuesLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            // Redirect directly to the venues page.
+            window.location.href = 'venues.html';
+        });
+    }
     // === END OF NEW LOGIC ===
 
     form.addEventListener('submit', (event) => {

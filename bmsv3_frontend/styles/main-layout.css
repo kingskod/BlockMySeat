@@ -1,26 +1,40 @@
-/* This file ONLY controls the main 2-column content area */
+/* This file controls the main page layout below the header */
 
 .app-container {
     display: grid;
-    /* A simple two-column layout for the sidebar and main content */
+    /* This defines two columns: a fixed 250px sidebar and a second column that takes up ALL remaining space (1fr) */
     grid-template-columns: 250px 1fr; 
-    gap: 30px;
-    padding: var(--padding-main);
-    width: 100%;
-    box-sizing: border-box;
+    
+    /* We remove the padding from the container itself */
+    padding: 0; 
+    
+    /* We need to account for the fixed header's height */
+    margin-top: 70px; 
 }
 
 .sidebar {
+    position: fixed;
+    left: 0;
+    top: 70px; /* Start below the header */
+    width: 250px;
+    height: calc(100vh - 70px); 
     background-color: var(--bg-secondary);
-    border-radius: var(--border-radius);
     padding: var(--padding-main);
-    box-shadow: 0 4px 12px var(--shadow-color);
+    box-shadow: 2px 0 10px var(--shadow-color);
+    z-index: 1000;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
 .main-content {
+    /* This tells the main content to live in the second column of the grid */
+    grid-column: 2 / 3; 
+    
+    /* Add the padding here instead of the container */
+    padding: var(--padding-main); 
+    
     display: flex;
     flex-direction: column;
     gap: 30px;
-    /* This prevents the main area from creating its own scrollbar */
-    overflow: hidden; 
 }

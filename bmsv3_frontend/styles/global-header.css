@@ -3,14 +3,24 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 40px;
-    height: 70px;
+    height: 70px; /* Define a fixed height */
     background-color: var(--bg-secondary);
     box-shadow: 0 2px 10px var(--shadow-color);
-    z-index: 1000;
+    z-index: 1001; /* Make sure it's on top */
     box-sizing: border-box;
+    
+    /* --- KEY CHANGES --- */
+    position: fixed; /* Fix it to the viewport */
+    top: 0;
+    left: 0;
+    width: 100%; /* Make it span the full width */
 }
+
+/* --- The rest of the file is the same, but included here for completeness --- */
 .header-logo {
-    flex-basis: 250px; /* Align with the sidebar width for a clean look */
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
 }
 .header-logo .logo-text {
     font-size: 1.8em;
@@ -18,9 +28,41 @@
     color: var(--text-primary);
     text-decoration: none;
 }
+.search-bar {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+.search-bar input {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 40px 10px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-family: var(--font-family-main);
+    font-size: 0.9em;
+}
+.search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+}
+.header-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+}
 .global-nav {
     display: flex;
-    gap: 30px;
+    align-items: center;
+    gap: 20px; /* Space between Movies, Venues, Bookings */
 }
 .global-nav a {
     text-decoration: none;
@@ -28,19 +70,16 @@
     font-weight: 500;
     font-size: 1.1em;
 }
-.global-nav a:hover {
-    color: var(--text-accent);
-}
-.header-profile {
-    flex-basis: 100px; /* Give it some space */
-    display: flex;
-    justify-content: flex-end;
-}
 .header-profile img {
-    width: 45px;
-    height: 45px;
+    width: 45px; 
+    height: 45px; 
+    aspect-ratio: 1 / 1;
     border-radius: 50%;
     object-fit: cover;
     cursor: pointer;
     border: 2px solid var(--border-color);
+}
+.theme-switch-wrapper {
+    /* Add margin to separate the toggle from the navigation links */
+    margin-right: 15px; 
 }

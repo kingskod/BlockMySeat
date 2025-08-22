@@ -75,11 +75,25 @@ void init_database()
         "ShowtimeID INTEGER PRIMARY KEY AUTOINCREMENT,"
         "MovieID INTEGER,"
         "VenueID INTEGER,"
+        "AuditoriumID INTEGER," // <-- ADDED THIS COLUMN
         "ShowtimeDateTime TEXT NOT NULL,"
         "FOREIGN KEY(MovieID) REFERENCES Movies(MovieID),"
-        "FOREIGN KEY(VenueID) REFERENCES Venues(VenueID));";
+        "FOREIGN KEY(VenueID) REFERENCES Venues(VenueID),"
+        "FOREIGN KEY(AuditoriumID) REFERENCES Auditoriums(AuditoriumID));";
     if (sqlite3_exec(db, sql_create_showtimes, 0, 0, &zErrMsg) != SQLITE_OK) {
         std::cerr << "SQL error (Showtimes): " << zErrMsg << std::endl;
+        sqlite3_free(zErrMsg);
+    }
+
+    const char* sql_create_auditoriums =
+        "CREATE TABLE IF NOT EXISTS Auditoriums ("
+        "AuditoriumID INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "VenueID INTEGER,"
+        "AuditoriumNumber INTEGER NOT NULL,"
+        "SeatCount INTEGER,"
+        "FOREIGN KEY(VenueID) REFERENCES Venues(VenueID));";
+    if (sqlite3_exec(db, sql_create_auditoriums, 0, 0, &zErrMsg) != SQLITE_OK) {
+        std::cerr << "SQL error (Auditoriums): " << zErrMsg << std::endl;
         sqlite3_free(zErrMsg);
     }
     // SEEDING FAKE DATA FOR TESTING
@@ -144,6 +158,24 @@ void init_database()
         
         if (sqlite3_exec(db, seed_sql, 0, 0, &zErrMsg) != SQLITE_OK) {
             std::cerr << "SQL error (Seeding Showtimes): " << zErrMsg << std::endl;
+            sqlite3_free(zErrMsg);
+        }
+    }
+
+    int auditorium_count = 0;
+    sqlite3_exec(db, "SELECT COUNT(*) FROM Auditoriums", callback_is_empty, &auditorium_count, &zErrMsg);
+    if (auditorium_count == 0) {
+        std::cout << "Auditoriums table is empty. Seeding..." << std::endl;
+        const char* seed_sql =
+            "INSERT INTO Auditoriums (VenueID, AuditoriumNumber, SeatCount) VALUES "
+            // Auditoriums for Venue 1 (Blocky Multiplex)
+            "(1, 1, 150), (1, 2, 150), (1, 3, 200),"
+            // Auditoriums for Venue 2 (The Redstone Cinema)
+            "(2, 1, 100), (2, 2, 120),"
+            // Auditoriums for Venue 3 (Pixel Perfect Theaters)
+            "(3, 1, 250), (3, 2, 250);";
+        if (sqlite3_exec(db, seed_sql, 0, 0, &zErrMsg) != SQLITE_OK) {
+            std::cerr << "SQL error (Seeding Auditoriums): " << zErrMsg << std::endl;
             sqlite3_free(zErrMsg);
         }
     }
