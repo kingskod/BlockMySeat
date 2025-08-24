@@ -24,13 +24,9 @@
             <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
         </div>
         <div class="header-right">
-            <div class="theme-switch-wrapper">
-                <label class="theme-switch" for="theme-checkbox">
-                <input type="checkbox" id="theme-checkbox" />
-                <div class="slider round"></div>
-                </label>
+            <div class="theme-toggle" id="theme-toggle">
+                <div class="toggle-indicator"></div>
             </div>
-
             <nav class="global-nav">
                 <a href="movies.html">Movies</a>
                 <a href="venues.html">Venues</a>
@@ -44,16 +40,6 @@
 
     <!-- 2. Main Details Page Container -->
     <div class="details-page-container">
-        
-        <!-- Left Side: Dates and Showtimes (Main scrolling area) -->
-        <main class="showtimes-content">
-            <div class="dates-bar">
-                <!-- Dates will be generated here by JavaScript -->
-            </div>
-            <div class="venue-list" id="venue-list">
-                <!-- Venue items will be generated here by JavaScript -->
-            </div>
-        </main>
 
         <!-- Right Side: Fixed Movie Info Panel -->
         <aside class="movie-info-panel-fixed">
@@ -68,6 +54,18 @@
                 <p id="movie-synopsis"></p>
             </div>
         </aside>
+        
+        <!-- Left Side: Dates and Showtimes (Main scrolling area) -->
+        <main class="showtimes-content">
+            <div class="dates-bar">
+                <!-- Dates will be generated here by JavaScript -->
+            </div>
+            <div class="venue-list" id="venue-list">
+                <!-- Venue items will be generated here by JavaScript -->
+            </div>
+        </main>
+
+        
 
     </div>
 

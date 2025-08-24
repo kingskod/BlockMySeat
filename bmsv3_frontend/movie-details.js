@@ -1,11 +1,13 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => 
+{
     const serverUrl = 'http://127.0.0.1:18080';
 
     // --- Get Movie ID from URL ---
     const urlParams = new URLSearchParams(window.location.search);
     const movieId = urlParams.get('id');
 
-    if (!movieId) {
+    if (!movieId) 
+        {
         document.body.innerHTML = '<h1>Movie ID not found in URL.</h1>';
         return;
     }
@@ -19,9 +21,57 @@ document.addEventListener('DOMContentLoaded', () => {
     const datesBar = document.querySelector('.dates-bar');
     const venueList = document.getElementById('venue-list');
     const venueTemplate = document.getElementById('venue-item-template');
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+
+    // Function to apply the theme
+    const applyTheme = (theme) => 
+    {
+        if (theme === 'night') 
+        {
+            body.classList.remove('day-mode');
+            body.classList.add('night-mode');
+        } 
+        else 
+        {
+            body.classList.remove('night-mode');
+            body.classList.add('day-mode');
+        }
+    };
+
+    // 1. Check for a saved theme in localStorage when the page loads
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) 
+    {
+        applyTheme(savedTheme);
+    } 
+    else 
+    {
+        applyTheme('day'); // Default to day mode if nothing is saved
+    }
+
+    // 2. Add the event listener for the new toggle switch
+    if (themeToggle) 
+    {
+        themeToggle.addEventListener('click', () => 
+        {
+            // Check which theme is currently active and switch to the other
+            if (body.classList.contains('day-mode')) 
+            {
+                localStorage.setItem('theme', 'night');
+                applyTheme('night');
+            } 
+            else
+            {
+                localStorage.setItem('theme', 'day');
+                applyTheme('day');
+            }
+        });
+    }
 
     // --- Helper Functions ---
-    const createStarRating = (rating) => {
+    const createStarRating = (rating) => 
+    {
         let starsHTML = '';
         const fullStars = Math.floor(rating);
         const halfStar = rating % 1 >= 0.5;
@@ -34,8 +84,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Main Data Fetching Functions ---
 
     // 1. Fetch and display the main movie details
-    const fetchMovieDetails = async () => {
-        try {
+    const fetchMovieDetails = async () => 
+    {
+        try 
+        {
             const response = await fetch(`${serverUrl}/movies/${movieId}`);
             if (!response.ok) throw new Error('Movie not found');
             const movie = await response.json();
@@ -46,16 +98,20 @@ document.addEventListener('DOMContentLoaded', () => {
             movieDuration.textContent = `${movie.duration_minutes} min`;
             movieRating.textContent = movie.rating;
             movieSynopsis.textContent = movie.synopsis;
-        } catch (error) {
+        } 
+        catch (error) 
+        {
             console.error('Failed to fetch movie details:', error);
             document.querySelector('.details-container').innerHTML = '<h1>Could not load movie details.</h1>';
         }
     };
 
     // 2. Generate the dates bar
-    const generateDates = () => {
+    const generateDates = () => 
+    {
         const today = new Date();
-        for (let i = 0; i < 7; i++) { // Generate for the next 7 days
+        for (let i = 0; i < 7; i++) 
+        { // Generate for the next 7 days
             const date = new Date(today);
             date.setDate(today.getDate() + i);
 
@@ -69,11 +125,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="date-number">${date.getDate()}</span>
             `;
 
-            if (i === 0) {
+            if (i === 0) 
+            {
                 dateItem.classList.add('active'); // Make today the default active date
             }
 
-            dateItem.addEventListener('click', () => {
+            dateItem.addEventListener('click', () =>
+            {
                 // Handle date selection
                 document.querySelector('.date-item.active').classList.remove('active');
                 dateItem.classList.add('active');
@@ -85,21 +143,25 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // 3. Fetch and display showtimes for a given date
-    const fetchShowtimes = async (date) => {
+    const fetchShowtimes = async (date) => 
+    {
         venueList.innerHTML = '<p>Loading showtimes...</p>'; // Show loading message
-        try {
+        try 
+        {
             const response = await fetch(`${serverUrl}/showtimes?movie_id=${movieId}&date=${date}`);
             if (!response.ok) throw new Error('Could not fetch showtimes');
             const venues = await response.json();
 
             venueList.innerHTML = ''; // Clear loading message
 
-            if (venues.length === 0) {
+            if (venues.length === 0) 
+            {
                 venueList.innerHTML = '<p>No showtimes available for this date.</p>';
                 return;
             }
 
-            venues.forEach(venue => {
+            venues.forEach(venue => 
+            {
                 const newItem = venueTemplate.cloneNode(true);
                 newItem.removeAttribute('id');
                 newItem.style.display = 'grid';
@@ -110,7 +172,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const timingsContainer = newItem.querySelector('.venue-timings');
                 timingsContainer.innerHTML = ''; // Clear any template buttons
-                venue.showtimes.forEach(showtime => {
+                venue.showtimes.forEach(showtime => 
+                {
                     const timeButton = document.createElement('button');
                     const selectedDate = document.querySelector('.date-item.active').dataset.date;
                     timeButton.className = 'time-btn';
@@ -118,7 +181,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Add event listener to redirect to seats.html with parameters
                     timeButton.addEventListener('click', () => {
-                        const params = new URLSearchParams({
+                        const params = new URLSearchParams(
+                        {
                             movie: encodeURIComponent(movieTitle.textContent),
                             showtime_id: showtime.showtime_id,
                             auditorium_id: showtime.auditorium_id,
@@ -134,7 +198,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 venueList.appendChild(newItem);
             });
 
-        } catch (error) {
+        } 
+        catch (error) 
+        {
             console.error('Failed to fetch showtimes:', error);
             venueList.innerHTML = '<p>Could not load showtimes.</p>';
         }
