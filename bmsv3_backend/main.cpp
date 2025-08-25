@@ -195,10 +195,10 @@ void init_database()
     if (venue_count == 0) {
         std::cout << "Venues table is empty. Seeding..." << std::endl;
         const char* seed_sql =
-            "INSERT INTO Venues (Name, Location, ImageURL, AuditoriumCount, Rating) VALUES " // <-- ADDED Rating
-            "('Blocky Multiplex', 'Downtown Cubeville', 'images/venue1.jpg', 12, 4.5),"      // <-- ADDED Rating value
-            "('The Redstone Cinema', 'Oak Valley', 'images/venue2.jpg', 8, 5.0),"           // <-- ADDED Rating value
-            "('Pixel Perfect Theaters', 'Glass Pane City', 'images/venue3.jpg', 16, 4.0);"; // <-- ADDED Rating value
+            "INSERT INTO Venues (Name, Location, ImageURL, AuditoriumCount, Rating) VALUES "
+            "('Blocky Multiplex', 'Downtown Cubeville', 'images/blocky multiplex.png', 12, 4.5),"
+            "('The Redstone Cinema', 'Oak Valley', 'images/the redstone cinema.png', 8, 5.0),"
+            "('Pixel Perfect Theaters', 'Glass Pane City', 'images/pixel perfect.png', 16, 4.0),"
             "('The Redstone Reel', 'Block City', 'images/the redstone reel.png', 5, 4.6),"
             "('Creeper Cinemas', 'Creeperville', 'images/creeper cinemas.png', 7, 4.4),"
             "('The Ender Screen', 'Endertown', 'images/the ender screen.png', 6, 4.7),"
