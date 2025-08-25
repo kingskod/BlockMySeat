@@ -5,6 +5,8 @@
 // Standard C++ and library headers go NEXT.
 #include <iostream>
 #include <string>
+#include <random> // For generating session tokens
+#include <sstream> // For generating session tokens
 #include <vector>
 #include <sqlite3.h>
 #include "include/json.hpp"
@@ -21,6 +23,16 @@ static int callback_is_empty(void* data, int argc, char** argv, char** azColName
     *count = argc > 0 ? atoi(argv[0]) : 0;
     return 0;
 }
+std::string generate_session_token() {
+    std::stringstream ss;
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distrib(0, 255);
+    for (int i = 0; i < 32; ++i) {
+        ss << std::hex << distrib(gen);
+    }
+    return ss.str();
+}
 
 void init_database() 
 {
@@ -36,6 +48,7 @@ void init_database()
         "Username TEXT UNIQUE NOT NULL,"
         "Email TEXT UNIQUE NOT NULL,"
         "Password TEXT NOT NULL);";
+        "SessionToken TEXT);";
 
     char* zErrMsg = 0;
     if (sqlite3_exec(db, sql_create_table, 0, 0, &zErrMsg) != SQLITE_OK) 
@@ -99,12 +112,14 @@ void init_database()
         std::cerr << "SQL error (Auditoriums): " << zErrMsg << std::endl;
         sqlite3_free(zErrMsg);
     }
-     const char* sql_create_bookings =
+    const char* sql_create_bookings =
         "CREATE TABLE IF NOT EXISTS Bookings ("
         "BookingID INTEGER PRIMARY KEY AUTOINCREMENT,"
         "ShowtimeID INTEGER,"
-        "SeatIdentifier TEXT NOT NULL," // e.g., "A5", "C12"
-        "FOREIGN KEY(ShowtimeID) REFERENCES Showtimes(ShowtimeID));";
+        "UserID INTEGER," // <-- ADDED THIS COLUMN
+        "SeatIdentifier TEXT NOT NULL,"
+        "FOREIGN KEY(ShowtimeID) REFERENCES Showtimes(ShowtimeID),"
+        "FOREIGN KEY(UserID) REFERENCES Users(UserID));";
     if (sqlite3_exec(db, sql_create_bookings, 0, 0, &zErrMsg) != SQLITE_OK) {
         std::cerr << "SQL error (Bookings): " << zErrMsg << std::endl;
         sqlite3_free(zErrMsg);
@@ -306,32 +321,48 @@ int main()
         return crow::response(201, json{{"status", "success"}, {"message", "Account created successfully."}}.dump());
     });
 
-    CROW_ROUTE(app, "/login").methods("POST"_method)
-    ([](const crow::request& req)
-    {
+     CROW_ROUTE(app, "/login").methods("POST"_method)
+    ([](const crow::request& req){
         auto j = json::parse(req.body);
         std::string username = j["username"];
         std::string password = j["password"];
 
         sqlite3_stmt* stmt;
-        const char* sql_select = "SELECT Password FROM Users WHERE Username = ?";
-        sqlite3_prepare_v2(db, sql_select, -1, &stmt, 0);
+        const char* sql_select = "SELECT UserID, Password FROM Users WHERE Username = ?";
+        
+        if (sqlite3_prepare_v2(db, sql_select, -1, &stmt, 0) != SQLITE_OK) {
+            return crow::response(500, "DB error");
+        }
         sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_STATIC);
 
-        if (sqlite3_step(stmt) == SQLITE_ROW) 
-        {
-            std::string password_from_db = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
-            if (password == password_from_db) 
-            {
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            int userId = sqlite3_column_int(stmt, 0);
+            std::string password_from_db = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            
+            if (password == password_from_db) {
                 sqlite3_finalize(stmt);
-                return crow::response(200, json{{"status", "success"}, {"message", "Login successful!"}}.dump());
+                std::string token = generate_session_token();
+                
+                // Store token in DB
+                const char* sql_update = "UPDATE Users SET SessionToken = ? WHERE UserID = ?";
+                sqlite3_prepare_v2(db, sql_update, -1, &stmt, 0);
+                sqlite3_bind_text(stmt, 1, token.c_str(), -1, SQLITE_STATIC);
+                sqlite3_bind_int(stmt, 2, userId);
+                sqlite3_step(stmt);
+                sqlite3_finalize(stmt);
+
+                json res_json;
+                res_json["status"] = "success";
+                res_json["message"] = "Login successful!";
+                res_json["token"] = token;
+                res_json["userId"] = userId;
+                return crow::response(200, res_json.dump());
             }
         }
-
+        
         sqlite3_finalize(stmt);
         return crow::response(401, json{{"status", "error"}, {"message", "Invalid username or password."}}.dump());
     });
-
     CROW_ROUTE(app, "/movies").methods("GET"_method)
     ([]()
     {
@@ -467,6 +498,49 @@ CROW_ROUTE(app, "/showtimes")
 
     return crow::response(200, final_response.dump());
 });
+CROW_ROUTE(app, "/auditorium-details/<int>")
+    ([](int auditoriumId){
+        json audi_json;
+        sqlite3_stmt* stmt;
+        const char* sql = "SELECT Layout, NormalPrice, PremiumPrice FROM Auditoriums WHERE AuditoriumID = ?";
+        if (sqlite3_prepare_v2(db, sql, -1, &stmt, 0) == SQLITE_OK) {
+            sqlite3_bind_int(stmt, 1, auditoriumId);
+            if (sqlite3_step(stmt) == SQLITE_ROW) {
+                audi_json["layout"] = json::parse(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)));
+                audi_json["normal_price"] = sqlite3_column_double(stmt, 1);
+                audi_json["premium_price"] = sqlite3_column_double(stmt, 2);
+            }
+        }
+        sqlite3_finalize(stmt);
+        if (audi_json.is_null()) return crow::response(404, "Auditorium not found");
+        return crow::response(200, audi_json.dump());
+    });
+    CROW_ROUTE(app, "/book-tickets").methods("POST"_method)
+    ([](const crow::request& req){
+        auto j = json::parse(req.body);
+        int showtimeId = j["showtime_id"];
+        int userId = j["user_id"];
+        json seats = j["seats"]; // This is an array of strings
+
+        const char* sql = "INSERT INTO Bookings (ShowtimeID, UserID, SeatIdentifier) VALUES (?, ?, ?)";
+        sqlite3_stmt* stmt;
+
+        for (const auto& seat : seats) {
+            sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
+            sqlite3_bind_int(stmt, 1, showtimeId);
+            sqlite3_bind_int(stmt, 2, userId);
+            sqlite3_bind_text(stmt, 3, seat.get<std::string>().c_str(), -1, SQLITE_STATIC);
+            
+            if (sqlite3_step(stmt) != SQLITE_DONE) {
+                std::cerr << "SQL error (Booking Insert): " << sqlite3_errmsg(db) << std::endl;
+                sqlite3_finalize(stmt);
+                return crow::response(500, "Failed to book one or more seats.");
+            }
+            sqlite3_finalize(stmt);
+        }
+
+        return crow::response(200, json{{"status", "success"}, {"message", "Booking confirmed!"}}.dump());
+    });
 CROW_ROUTE(app, "/occupied-seats")
     ([](const crow::request& req){
         auto showtime_id_str = req.url_params.get("showtime_id");

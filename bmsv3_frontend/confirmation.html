@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlockMySeat - Confirm Booking</title>
+    
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/global-header.css">
+    <link rel="stylesheet" href="styles/confirmation.css"> <!-- New -->
+    
+    <script src="https://kit.fontawesome.com/YOUR_KIT_CODE.js" crossorigin="anonymous"></script>
+</head>
+<body class="day-mode">
+
+    <!-- 1. Global Header -->
+    <header class="global-header">
+        <div class="header-logo">
+            <span class="logo-text">BlockMySeat</span>
+        </div>
+        <div class="header-left">
+            <a href="movies.html" class="logo-text">BlockMySeat</a>
+        </div>
+
+    <div class="search-bar">
+        <input type="text" placeholder="Search...">
+        <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+    </div>
+
+    <div class="header-right">
+        <div class="theme-toggle" id="theme-toggle">
+            <div class="toggle-indicator"></div>
+        </div>
+        <nav class="global-nav">
+            <a href="movies.html">Movies</a>
+            <a href="venues.html">Venues</a>
+            <a href="#">Bookings</a>
+        </nav>
+        <div class="header-profile">
+            <img src="images/user-avatar.png" alt="User Avatar">
+        </div>
+    </div>
+</header>
+
+    <!-- 2. Main Confirmation Page Container -->
+    <div class="confirmation-container">
+        
+        <!-- Left Column: Movie Info -->
+        <div class="summary-panel movie-summary">
+            <img src="" alt="Movie Poster" id="movie-poster">
+            <h1 id="movie-title">Loading...</h1>
+            <p id="venue-name"></p>
+        </div>
+
+        <!-- Right Column: Booking Details -->
+        <div class="summary-panel booking-details">
+            <h2>Booking Summary</h2>
+            
+            <div class="detail-item">
+                <span>Date & Time</span>
+                <strong id="show-date-time"></strong>
+            </div>
+            <div class="detail-item">
+                <span>Number of Seats</span>
+                <strong id="seat-count"></strong>
+            </div>
+            <div class="detail-item">
+                <span>Selected Seats</span>
+                <strong id="seat-numbers"></strong>
+            </div>
+            
+            <hr class="summary-divider">
+
+            <div class="detail-item price-item">
+                <span>Ticket Price</span>
+                <strong id="price-breakdown"></strong>
+            </div>
+            <div class="detail-item total-price">
+                <span>Total</span>
+                <strong id="total-price"></strong>
+            </div>
+
+            <!-- Guest Check / Confirmation Button -->
+            <div id="guest-blocker" class="hidden">
+                <p>You must be logged in to complete your booking.</p>
+                <a href="index.html" class="login-link">Login or Sign Up</a>
+            </div>
+            <button id="confirm-booking-btn">Confirm Booking</button>
+        </div>
+    </div>
+
+    <script src="confirmation.js"></script>
+</body>
+</html>
