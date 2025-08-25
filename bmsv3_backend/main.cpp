@@ -199,6 +199,13 @@ void init_database()
             "('Blocky Multiplex', 'Downtown Cubeville', 'images/venue1.jpg', 12, 4.5),"      // <-- ADDED Rating value
             "('The Redstone Cinema', 'Oak Valley', 'images/venue2.jpg', 8, 5.0),"           // <-- ADDED Rating value
             "('Pixel Perfect Theaters', 'Glass Pane City', 'images/venue3.jpg', 16, 4.0);"; // <-- ADDED Rating value
+            "('The Redstone Reel', 'Block City', 'images/the redstone reel.png', 5, 4.6),"
+            "('Creeper Cinemas', 'Creeperville', 'images/creeper cinemas.png', 7, 4.4),"
+            "('The Ender Screen', 'Endertown', 'images/the ender screen.png', 6, 4.7),"
+            "('NetherFlix Theatre', 'Nether District', 'images/netherflix.png', 8, 4.5),"
+            "('Diamond Screenplex', 'Minecart Central', 'images/diamond screenplex.png', 10, 4.8),"
+            "('Blockbuster Pavilion', 'Craftsville', 'images/blockbuster pavilion.png', 4, 4.3);";
+
         if (sqlite3_exec(db, seed_sql, 0, 0, &zErrMsg) != SQLITE_OK) {
             std::cerr << "SQL error (Seeding Venues): " << zErrMsg << std::endl;
             sqlite3_free(zErrMsg);
@@ -221,8 +228,11 @@ void init_database()
             "(2, 1, '2025-08-22 18:00:00'), (2, 1, '2025-08-22 21:00:00'),"
             // Movie 3 at Venue 3
             "(3, 3, '2025-08-22 19:00:00'), (3, 3, '2025-08-22 22:00:00'),"
+         //Movie 3 at Venue 6
+            "(3, 6, '2025-08-22 15:00:00'), (3, 6, '2025-08-22 18:30:00'), (3, 6, '2025-08-22 22:00:00'),"
             // Showtimes for tomorrow (e.g., 2025-08-23)
-            "(1, 1, '2025-08-23 10:00:00'), (1, 3, '2025-08-23 15:00:00');";
+            "(1, 1, '2025-08-23 10:00:00'), (1, 3, '2025-08-23 15:00:00'),(3, 3, '2025-08-23 14:30:00'), (1, 4, '2025-08-23 17:00:00'),"
+            "(2, 5, '2025-08-23 19:30:00'), (3, 6, '2025-08-23 21:45:00');";
         
         if (sqlite3_exec(db, seed_sql, 0, 0, &zErrMsg) != SQLITE_OK) {
             std::cerr << "SQL error (Seeding Showtimes): " << zErrMsg << std::endl;
