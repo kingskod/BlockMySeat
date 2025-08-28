@@ -3,7 +3,7 @@
 
 :root {
     /* Sign-In Mode (Night) Colors */
-    --signin-bg: url('loadingscreen.png');
+    --signin-bg: url('../loadingscreen.png');
     --signin-primary-text: #EAEAEA;
     --signin-secondary-text: #A0A0A0;
     --signin-container-bg: rgba(14, 20, 22, 0.85); /* Dark, semi-transparent */
@@ -12,7 +12,7 @@
     --signin-input-border: #445460;
     
     /* Sign-Up Mode (Day) Colors */
-    --signup-bg: url('loadingscreenday.png');
+    --signup-bg: url('../loadingscreenday.png');
     --signup-primary-text: #2c3e50; /* Dark Slate Blue */
     --signup-secondary-text: #34495e;
     --signup-container-bg: rgba(252, 252, 252, 0.85); /* Light, semi-transparent */
