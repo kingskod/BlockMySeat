@@ -194,6 +194,7 @@ This page requires a `movie_id` to know which movie to display.
 
 This page requires the most parameters to function correctly.
 
+
 *   **Test Case:** For "Minecraft: The First Movie" (`movie_id=1`), at a showtime with `showtime_id=1` in `auditorium_id=2` on a specific date and time.
     ```
     file:///E:/BlockMySeat/bmsv3/bmsv3_frontend/seats.html?movie=Minecraft%3A%20The%20First%20Movie&showtime_id=1&auditorium_id=2&date=2025-08-22&time=17%3A00
