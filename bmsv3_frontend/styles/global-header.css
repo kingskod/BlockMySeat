@@ -81,7 +81,7 @@
     border: 2px solid var(--border-color);
 }
 .theme-toggle {
-    width: 65px;
+    width: 45px;
     height: 26px;
     background-color: var(--bg-tertiary);
     border-radius: 50px;
