@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () =>
                     timeButton.addEventListener('click', () => {
                         const params = new URLSearchParams(
                         {
-                            movie: encodeURIComponent(movieTitle.textContent),
+                            movie: movieTitle.textContent,
                             showtime_id: showtime.showtime_id,
                             auditorium_id: showtime.auditorium_id,
                             date: selectedDate,

@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Get data from URL ---
     const urlParams = new URLSearchParams(window.location.search);
-    const movieTitle = decodeURIComponent(urlParams.get('movie'));
+    const movieTitle = decodeURIComponent(urlParams.get('movie') || '');
     const showtimeId = urlParams.get('showtime_id');
     const auditoriumId = urlParams.get('auditorium_id');
     const date = urlParams.get('date');
