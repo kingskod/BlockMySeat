@@ -22,6 +22,23 @@
     border-radius: var(--border-radius);
     text-align: center;
     box-shadow: 0 10px 30px var(--shadow-color);
+    position: relative; /* Needed for positioning the close button */
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 2em;
+    color: var(--text-secondary);
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    color: var(--text-primary);
 }
 
 #logout-prompt h3 {
