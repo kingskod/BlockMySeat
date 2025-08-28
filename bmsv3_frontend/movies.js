@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // fetch movies type shi
 
-    const fetchMovies = async (url = 'http://127.0.0.1:18080/movies') => {
+    const fetchMovies = async (url = 'http://12.0.0.1:18080/movies') => {
         try {
             const response = await fetch(url);
             if (!response.ok) {

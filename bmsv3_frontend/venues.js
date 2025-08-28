@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return starsHTML;
     };
 
-    const fetchVenues = async (url = 'http://127.0.0.1:18080/venues') => {
+    const fetchVenues = async (url = 'http://12.0.0.1:18080/venues') => {
         if (!venueListContainer || !venueTemplate) return;
         try {
             const response = await fetch(url);
