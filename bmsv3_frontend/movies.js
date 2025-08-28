@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchMovies = async () => {
         try {
-            const response = await fetch('http://12.0.0.1:18080/movies');
+            const response = await fetch('http://0.0.0.0:18080/movies');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
