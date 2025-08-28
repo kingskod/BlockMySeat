@@ -116,6 +116,3 @@
     transform: translateX(24px); /* Move the circle to the right */
 }
 
-.theme-switch-wrapper label {
-    display: none; /* Hide the check mark for the theme switch */
-}
