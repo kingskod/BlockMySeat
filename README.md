@@ -141,3 +141,69 @@ You can now use the website!
     1.  Make sure your C++ `./server` is running in the terminal.
     2.  **Firewall (Windows):** The first time you run the server, Windows Defender Firewall may ask for permission. Ensure you check **both Private and Public networks** and click **"Allow access"**.
 *   **Data seems old or tables are missing:** If you make changes to the database structure in `main.cpp`, you **must delete the `blockmyseat.db` file** in the `backend` folder and restart the server to force it to create a new, correct database.
+---
+
+### **Dummy Links for Testing**
+
+These URLs assume you are opening the files directly from your local file system. You will need to replace `E:/BlockMySeat/bmsv3/bmsv3_frontend/` with the actual path to your project's `frontend` folder.
+
+#### **1. Login / Sign-Up Page**
+
+This page requires no special parameters.
+
+*   **Sign In (Default):**
+    ```
+    file:///E:/BlockMySeat/bmsv3/bmsv3_frontend/index.html
+    ```
+*   **Sign Up:**
+    ```
+    file:///E:/BlockMySeat/bmsv3/bmsv3_frontend/index.html?mode=signup
+    ```
+
+#### **2. Movies Page**
+
+This page is the main dashboard and requires no parameters to load.
+
+*   **Movies Page:**
+    ```
+    file:///E:/BlockMySeat/bmsv3/bmsv3_frontend/movies.html
+    ```
+
+#### **3. Venues Page**
+
+This page also requires no parameters to load.
+
+*   **Venues Page:**
+    ```
+    file:///E:/BlockMySeat/bmsv3/bmsv3_frontend/venues.html
+    ```
+
+#### **4. Movie Details Page**
+
+This page requires a `movie_id` to know which movie to display.
+
+*   **Details for Movie #1:**
+    ```
+    file:///E:/BlockMySeat/bmsv3/bmsv3_frontend/movie-details.html?id=1
+    ```*   **Details for Movie #2:**
+    ```
+    file:///E:/BlockMySeat/bmsv3/bmsv3_frontend/movie-details.html?id=2
+    ```
+
+#### **5. Seat Selection Page**
+
+This page requires the most parameters to function correctly.
+
+*   **Test Case:** For "Minecraft: The First Movie" (`movie_id=1`), at a showtime with `showtime_id=1` in `auditorium_id=2` on a specific date and time.
+    ```
+    file:///E:/BlockMySeat/bmsv3/bmsv3_frontend/seats.html?movie=Minecraft%3A%20The%20First%20Movie&showtime_id=1&auditorium_id=2&date=2025-08-22&time=17%3A00
+    ```
+
+#### **6. Confirmation Page**
+
+This page requires all the information from the previous steps, plus the selected seats.
+
+*   **Test Case:** Confirming a booking for seats `A5` and `A6` for the same showtime as above.
+    ```
+    file:///E:/BlockMySeat/bmsv3/bmsv3_frontend/confirmation.html?movie=Minecraft%3A%20The%20First%20Movie&venue=Blocky%20Multiplex&poster=images%2Fposter1.jpg&showtime_id=1&auditorium_id=1&date=2025-08-22&time=10%3A00&seats=A5,A6
+    ```
