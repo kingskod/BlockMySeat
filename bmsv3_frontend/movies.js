@@ -112,4 +112,26 @@ document.addEventListener('DOMContentLoaded', () => {
             applyTheme('day');
         }
     });
+
+    // --- Logout Prompt Logic ---
+    const logoutButton = document.getElementById('logout-button');
+    const logoutPrompt = document.getElementById('logout-prompt-overlay');
+    const logoutConfirmBtn = document.getElementById('logout-confirm-btn');
+    const logoutCancelBtn = document.getElementById('logout-cancel-btn');
+
+    if (logoutButton && logoutPrompt) {
+        logoutButton.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default link behavior
+            logoutPrompt.classList.remove('hidden');
+        });
+
+        logoutCancelBtn.addEventListener('click', () => {
+            logoutPrompt.classList.add('hidden');
+        });
+
+        logoutConfirmBtn.addEventListener('click', () => {
+            sessionStorage.clear();
+            window.location.href = 'index.html';
+        });
+    }
 });
