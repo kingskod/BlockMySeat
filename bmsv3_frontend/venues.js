@@ -111,10 +111,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return starsHTML;
     };
 
-    const fetchVenues = async () => {
+    const fetchVenues = async (url = 'http://127.0.0.1:18080/venues') => {
         if (!venueListContainer || !venueTemplate) return;
         try {
-            const response = await fetch('http://127.0.0.1:18080/venues');
+            const response = await fetch(url);
             if (!response.ok) throw new Error('Network response was not ok');
             const venues = await response.json();
             
@@ -141,4 +141,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     fetchVenues();
+
+    const topRatedButton = document.querySelector('.sidebar-nav a[href="#"]');
+    topRatedButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        fetchVenues('http://127.0.0.1:18080/venues/top-rated');
+    });
 });

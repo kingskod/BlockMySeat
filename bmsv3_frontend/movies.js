@@ -45,9 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // fetch movies type shi
 
-    const fetchMovies = async () => {
+    const fetchMovies = async (url = 'http://127.0.0.1:18080/movies') => {
         try {
-            const response = await fetch('http://12.0.0.1:18080/movies');
+            const response = await fetch(url);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 newCard.querySelector('.card-poster').src = movie.poster_url;
                 newCard.querySelector('.card-poster').alt = movie.title;
                 newCard.querySelector('.card-title').textContent = movie.title;
-                newCard.querySelector('.card-rating').textContent = `⭐ ${movie.rating}`;
+                newCard.querySelector('.card-rating').textContent = `⭐ ${movie.score}/10`;
                 newCard.querySelector('.card-genre').textContent = `${movie.duration_minutes} min`;
                 newCard.addEventListener('click', () => {
                     window.location.href = `movie-details.html?id=${movie.id}`;
@@ -80,6 +80,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     fetchMovies();
+
+    const topRatedButton = document.querySelector('.sidebar-nav a[href="#"]');
+    topRatedButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        fetchMovies('http://127.0.0.1:18080/movies/top-rated');
+    });
         const themeSwitch = document.getElementById('theme-checkbox');
     const body = document.body;
 
