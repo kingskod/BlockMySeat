@@ -1,0 +1,16 @@
+import random
+for movie:
+    duration=movie.duration
+    for date:
+        dateshows=[]
+        for venue:
+            showings=[]
+            start time=random(8am - 12am)
+            end time=random(10pm-1am(next day))
+            time=start time
+            while time<end time:
+                showings.add((time,time+duration))
+                time+= duration+random(30mins-1.5hr).roundoff( to 15mins intervals)
+            dateshows.add(showings)
+
+            
