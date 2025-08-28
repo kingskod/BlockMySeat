@@ -3,14 +3,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Get data from URL ---
     const urlParams = new URLSearchParams(window.location.search);
-    const movieTitle = decodeURIComponent(urlParams.get('movie'));
-    const venueName = decodeURIComponent(urlParams.get('venue'));
-    const posterUrl = decodeURIComponent(urlParams.get('poster'));
+    const movieTitle = decodeURIComponent(urlParams.get('movie') || '');
+    const venueName = decodeURIComponent(urlParams.get('venue') || '');
+    const posterUrl = decodeURIComponent(urlParams.get('poster') || '');
     const showtimeId = urlParams.get('showtime_id');
     const auditoriumId = urlParams.get('auditorium_id');
     const date = urlParams.get('date');
     const time = urlParams.get('time');
-    const seats = urlParams.get('seats').split(',');
+    const seats = (urlParams.get('seats') || '').split(',');
 
     // --- DOM Elements ---
     const confirmBtn = document.getElementById('confirm-booking-btn');
