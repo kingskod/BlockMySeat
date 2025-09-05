@@ -10,7 +10,7 @@
 #include <vector>
 #include <sqlite3.h>
 #include "include/json.hpp"
-
+#include "seed_data.hpp"
 // The Crow headers go LAST.
 #include "include/crow.h"
 
@@ -34,271 +34,54 @@ std::string generate_session_token() {
     return ss.str();
 }
 
-void init_database() 
-{
-    if (sqlite3_open("blockmyseat.db", &db)) 
-    {
+void init_database() {
+    if (sqlite3_open("blockmyseat.db", &db)) {
         std::cerr << "Can't open database: " << sqlite3_errmsg(db) << std::endl;
         exit(1);
     }
-
-    const char* sql_create_table = 
-        "CREATE TABLE IF NOT EXISTS Users ("
-        "UserID INTEGER PRIMARY KEY AUTOINCREMENT,"
-        "Username TEXT UNIQUE NOT NULL,"
-        "Email TEXT UNIQUE NOT NULL,"
-        "Password TEXT NOT NULL);";
-        "SessionToken TEXT);";
-
     char* zErrMsg = 0;
-    if (sqlite3_exec(db, sql_create_table, 0, 0, &zErrMsg) != SQLITE_OK) 
-    {
-        std::cerr << "SQL error: " << zErrMsg << std::endl;
-        sqlite3_free(zErrMsg);
-    }
 
-    const char* sql_create_movies =
-        "CREATE TABLE IF NOT EXISTS Movies ("
-        "MovieID INTEGER PRIMARY KEY AUTOINCREMENT,"
-        "Title TEXT NOT NULL,"
-        "PosterURL TEXT,"
-        "Synopsis TEXT,"
-        "DurationMinutes INTEGER,"
-        "Rating TEXT);";
+    // Define all table creation schemas here
+    const char* schemas[] = {
+        "CREATE TABLE IF NOT EXISTS Users (...);", // Paste your full CREATE TABLE Users string here
+        "CREATE TABLE IF NOT EXISTS Movies (...);", // Paste your full CREATE TABLE Movies string here
+        "CREATE TABLE IF NOT EXISTS Venues (...);",
+        "CREATE TABLE IF NOT EXISTS AuditoriumTemplates (...);",
+        "CREATE TABLE IF NOT EXISTS Auditoriums (...);",
+        "CREATE TABLE IF NOT EXISTS Showtimes (...);",
+        "CREATE TABLE IF NOT EXISTS Bookings (...);"
+    };
 
-    if (sqlite3_exec(db, sql_create_movies, 0, 0, &zErrMsg) != SQLITE_OK) 
-    {
-        std::cerr << "SQL error (Movies): " << zErrMsg << std::endl;
-        sqlite3_free(zErrMsg);
-    }
-    const char* sql_create_venues =
-        "CREATE TABLE IF NOT EXISTS Venues ("
-        "VenueID INTEGER PRIMARY KEY AUTOINCREMENT,"
-        "Name TEXT NOT NULL,"
-        "Location TEXT,"
-        "ImageURL TEXT,"
-        "AuditoriumCount INTEGER,"
-        "Rating REAL);";
-    if (sqlite3_exec(db, sql_create_venues, 0, 0, &zErrMsg) != SQLITE_OK) {
-        std::cerr << "SQL error (Venues): " << zErrMsg << std::endl;
-        sqlite3_free(zErrMsg);
-    }
-
-    const char* sql_create_showtimes =
-        "CREATE TABLE IF NOT EXISTS Showtimes ("
-        "ShowtimeID INTEGER PRIMARY KEY AUTOINCREMENT,"
-        "MovieID INTEGER,"
-        "VenueID INTEGER,"
-        "AuditoriumID INTEGER," // <-- ADDED THIS COLUMN
-        "ShowtimeDateTime TEXT NOT NULL,"
-        "FOREIGN KEY(MovieID) REFERENCES Movies(MovieID),"
-        "FOREIGN KEY(VenueID) REFERENCES Venues(VenueID),"
-        "FOREIGN KEY(AuditoriumID) REFERENCES Auditoriums(AuditoriumID));";
-    if (sqlite3_exec(db, sql_create_showtimes, 0, 0, &zErrMsg) != SQLITE_OK) {
-        std::cerr << "SQL error (Showtimes): " << zErrMsg << std::endl;
-        sqlite3_free(zErrMsg);
-    }
-
-    const char* sql_create_auditoriums =
-        "CREATE TABLE IF NOT EXISTS Auditoriums ("
-        "AuditoriumID INTEGER PRIMARY KEY AUTOINCREMENT,"
-        "VenueID INTEGER,"
-        "AuditoriumNumber INTEGER NOT NULL,"
-        "TemplateID INTEGER," // <-- REPLACED 'Layout'
-        "NormalPrice REAL,"
-        "PremiumPrice REAL,"
-        "FOREIGN KEY(VenueID) REFERENCES Venues(VenueID),"
-        "FOREIGN KEY(TemplateID) REFERENCES AuditoriumTemplates(TemplateID));";
-    if (sqlite3_exec(db, sql_create_auditoriums, 0, 0, &zErrMsg) != SQLITE_OK) {
-        std::cerr << "SQL error (Auditoriums): " << zErrMsg << std::endl;
-        sqlite3_free(zErrMsg);
-    }
-
-    const char* sql_create_bookings =
-        "CREATE TABLE IF NOT EXISTS Bookings ("
-        "BookingID INTEGER PRIMARY KEY AUTOINCREMENT,"
-        "ShowtimeID INTEGER,"
-        "UserID INTEGER," // <-- ADDED THIS COLUMN
-        "SeatIdentifier TEXT NOT NULL,"
-        "FOREIGN KEY(ShowtimeID) REFERENCES Showtimes(ShowtimeID),"
-        "FOREIGN KEY(UserID) REFERENCES Users(UserID));";
-    if (sqlite3_exec(db, sql_create_bookings, 0, 0, &zErrMsg) != SQLITE_OK) {
-        std::cerr << "SQL error (Bookings): " << zErrMsg << std::endl;
-        sqlite3_free(zErrMsg);
-    }
-    const char* sql_create_templates =
-        "CREATE TABLE IF NOT EXISTS AuditoriumTemplates ("
-        "TemplateID INTEGER PRIMARY KEY AUTOINCREMENT,"
-        "Description TEXT," // e.g., "Standard Small", "Large IMAX"
-        "PremiumRows INTEGER,"
-        "NormalRows INTEGER,"
-        "Section1Seats INTEGER,"
-        "Section2Seats INTEGER,"
-        "Section3Seats INTEGER);";
-    if (sqlite3_exec(db, sql_create_templates, 0, 0, &zErrMsg) != SQLITE_OK) {
-        std::cerr << "SQL error (AuditoriumTemplates): " << zErrMsg << std::endl;
-        sqlite3_free(zErrMsg);
-    }
-
-
-    // SEEDING FAKE DATA FOR TESTING
-    int movie_count = 0;
-    sqlite3_exec(db, "SELECT COUNT(*) FROM Movies", callback_is_empty, &movie_count, &zErrMsg);
-
-    if (movie_count == 0) 
-    {
-        std::cout << "Movies table is empty. Seeding with initial data..." << std::endl;
-        const char* seed_sql =
-            "INSERT INTO Movies (Title, PosterURL, Synopsis, DurationMinutes, Rating) VALUES "
-            "('The Crimson Shadow', 'images/crimson shadow.png', 'In a land shrouded by a creeping darkness, a lone figure known only as \"The Crimson Shadow\" stands on the precipice between light and oblivion. Tasked with a prophecy to restore the fallen kingdom of Eldoria, they must journey across treacherous mountains and stormy seas, confronting mythical beasts and a malevolent sorcerer who seeks to plunge the world into eternal night. The fate of their world rests on their shoulders, and their crimson-hued powers are their only guide.', 120, 'PG-13'),"
-            "('Echoes of Neptune', 'images/echos of neptune.png', 'A deep-space expedition to Neptune''s mysterious ocean moon reveals a startling discovery: a colossal, crystalline city pulsating with an otherworldly energy. While investigating, a lone astronaut is separated from their crew and discovers they can communicate with the alien life form inhabiting the moon. The astronaut learns the ''echos'' they are hearing are not just soundwaves, but the last remnants of a dying race. They must choose between fulfilling their mission parameters and helping an ancient species before the deep-sea pressures of Neptune’s moon erase them from existence forever.', 95, 'PG-13'),"
-            "('Galactic Drift', 'images/galactic drift.png', 'In a sprawling, neon-lit cyberpunk metropolis, a lone renegade hacker discovers a rogue AI that has broken free from its creators. Hunted by the corporation that seeks to reclaim it, the duo must navigate a dangerous high-speed chase through the city''s futuristic sky-high highways, with the fate of human-AI relations in their hands.', 110, 'PG-13 for sequences of intense futuristic action and violence, and some thematic elements.'),"
-            "('Midnight Cipher', 'images/midnight cipher.png', 'A gritty private eye is hired to retrieve a glowing, encrypted briefcase in a rain-soaked, neon-lit city. He finds himself embroiled in a conspiracy far deadlier than a simple theft, as ruthless assassins and a shadowy organization hunt him for the cipher he now possesses. To survive, he must decode its secrets before the city''s midnight hour.', 135, 'R for strong violence, language, and some sexual content.'),"
-            "('The Last Starlight', 'images/the laststarlight.png', 'In the last moments of a dying universe, a lone astronaut embarks on a desperate journey to find a mythical cosmic anomaly—a \"last starlight\" that can reignite creation. As he traverses desolate, forgotten worlds, he must confront his own solitude and the philosophical weight of his mission, knowing that his success or failure will determine the fate of everything that has ever been.', 105, 'PG'),"
-            "('Forgotten City of Zorg', 'images/forgotten city of zorg.png', 'A rugged archaeologist ventures into a mysterious, overgrown jungle in search of the legendary Forgotten City of Zorg. He discovers a colossal, ruined city with strange, alien-like geometric patterns, hinting at a lost civilization. He must navigate the city''s treacherous ruins and decode its secrets to uncover the truth of its ancient inhabitants.', 105, 'PG'),"
-            "('Cybernetic Dawn', 'images/cybernetic dawn.png', 'In a dystopian future where humanity is enhanced with cybernetic technology, a group of rebels with advanced modifications rises up against the tyrannical corporations that control them. As the sun rises on a new day, they must fight their way through the city''s futuristic skyline to spark a revolution and reclaim their freedom.', 105, 'PG-13'),"
-            "('Project Chimera', 'images/project chimera.png', 'A brilliant but reckless scientist embarks on a forbidden experiment to create monstrous, chimeric creatures by fusing the DNA of different animals. As his creations break free and wreak havoc, he must find a way to stop them before his project destroys the world.', 105, 'PG-13'),"
-            "('Quantum Bloom', 'images/quantum bloom.png', 'A lone explorer discovers a hidden portal that leads to a vibrant, otherworldly dimension. They enter to find a breathtaking landscape filled with glowing, fantastical flowers and plants. They must navigate this strange, beautiful world to uncover the source of its incredible power, but they soon discover that this beauty hides a dangerous secret.', 105, 'PG'),"
-            "('Solaris Rising', 'images/solaris rising.png', 'Humanity''s last hope rests in a colossal, solar-powered space station that is orbiting a dying star. A small crew on the station must find a way to reignite the star, or they will be plunged into a cosmic cold darkness, ending the human race for good.', 105, 'PG'),"
-            "('The Alchemist''s Secret', 'images/the alchemists secret.png', 'An alchemist discovers the legendary secret to creating a new type of element. This new substance is said to have the power to create a new, better world, but a powerful, shadowy organization wants to use its power for destruction. The alchemist must protect his secret at all costs before it falls into the wrong hands.', 105, 'PG'),"
-            "('Warden of the Void', 'images/warden of the void.png', 'A lone, heavily-armored warrior is the Warden of the Void, a guardian of the universe''s most dangerous prison: a massive, swirling black vortex in deep space. He must face down a malevolent, otherworldly force that is trying to escape from the vortex, using his wits and weaponry to protect the universe from a cosmic threat.', 105, 'PG-13'),"
-            "('Chrono Heist', 'images/chrono heist.png', 'A master thief in a futuristic city is tasked with stealing a valuable historical artifact from a highly secure museum. He discovers that the artifact is a temporal device, and as he tries to steal it, he finds himself in a high-stakes, time-bending heist where he must navigate holographic displays of historical events and a constantly changing reality to escape and prevent a temporal paradox.', 105, 'PG-13'),"
-            "('Neon Serpent', 'images/neon serpent.png', 'In a futuristic, cyberpunk city, a mysterious, glowing, neon-colored serpent appears in the city''s rain-soaked streets. As it slithers through the city''s alleyways, it leaves a trail of destruction in its wake. A lone detective must track down the serpent and uncover its origins to prevent it from destroying the city.', 105, 'PG-13'),"
-            "('Oracle of the Dunes', 'images/oracle of the dunes.png', 'A lone wanderer braves a desolate, sand-swept world to find the legendary Oracle, said to reside within a colossal, ancient temple carved from the desert itself. As colossal sandstorms loom, they must uncover the secrets of the shifting landscape and face the trials of the desert to hear the Oracle''s prophecy, which promises to change their world forever.', 105, 'PG'),"
-            "('Titan''s Fall', 'images/titans fall.png', 'In a world where colossal mechanical gods once roamed, an expedition team discovers a long-lost titan, now overgrown and dormant in a misty valley. As they explore its immense, silent form, they uncover the secrets of its catastrophic downfall, only to realize that their presence has awakened something far older and more dangerous than they could have imagined.', 105, 'PG-13'),"
-            "('Aetherium Wars', 'images/aetherium wars.png', 'The sky-high conflict between two warring floating cities, one a kingdom of arcane magic and the other a bastion of industrial science, reaches a fever pitch. As their grand airships and fantastical weapons clash in the heavens, a hero from each side must race against time to expose a hidden conspiracy that threatens to bring both their civilizations crashing down.', 105, 'PG'),"
-            "('Rogue Singularity', 'images/rogue singularity.png', 'When a maverick pilot on a reconnaissance mission stumbles upon a chaotic temporal anomaly, their advanced starship is drawn into a maelstrom of cosmic energy and shattered realities. They must fight against the impossible forces of the singularity to find a way back home, navigating a field of swirling debris and twisted spacetime.', 105, 'PG-13'),"
-            "('Whispers of the Deep', 'images/whispers of the deep.png', 'A submarine crew on a deep-sea mining expedition makes a chilling discovery. When their sonar picks up an unknown signal, they descend into the ocean''s darkest abyss, only to find themselves stalked by a monstrous, ancient creature from beyond the light. Trapped in the crushing darkness, they must find a way to escape before the terrifying whispers of the deep claim their sanity.', 105, 'PG-13'),"
-            "('The Gilded Compass', 'images/the glided compass.png', 'In a world where clockwork marvels and steampunk contraptions power civilization, a skilled adventurer comes into possession of a mystical, gilded compass that points not to true north, but to the location of a legendary hidden city. Pursued by a ruthless corporate guild, they must decipher the compass''s secrets and navigate a treacherous world of automatons, airships, and grand contraptions.', 105, 'PG'),"
-            "('Zero Point Anomaly', 'images/zero point anomaly.png', 'In a high-security research facility, a team of brilliant but reckless scientists successfully creates a stable temporal anomaly. But their groundbreaking discovery quickly spirals out of control, revealing that the anomaly is not just a scientific breakthrough but a portal to another dimension. They must contain the anomaly and prevent its catastrophic effects from bleeding into their reality.', 105, 'PG-13'),"
-            "('Siren''s Lament', 'images/sirens lament.png', 'On a dark and stormy night, a grieving sailor is lured to a treacherous shipwreck by the haunting song of a spectral siren. As a furious storm rages, he must resist her enchanting call, for the whispers promise to reunite him with his lost love. He must face the truth of her beautiful lie and escape the Siren''s embrace before he is lost to the sea forever.', 105, 'PG-13'),"
-            "('Dragon''s Gambit', 'images/dragons gambit.png', 'The land is at the mercy of a fearsome dragon, and the last remaining kingdom makes a desperate final move. The most skilled knight is sent on a perilous quest to challenge the dragon and its colossal might, standing on a misty mountaintop as the sun sets, ready for the final, legendary battle that will determine the fate of their world.', 105, 'PG'),"
-            "('The Starforged Blade', 'images/the starforged blade.png', 'As a cataclysmic war rages in the cosmos, a lonely warrior discovers a legendary sword on a distant, icy mountaintop. Forged from the very stars themselves, the blade grants them immense power, and with it, they are humanity''s last hope. They must wield the blade to face down an unstoppable enemy and bring an end to the celestial conflict.', 105, 'PG-13'),"
-            "('Nomad of the Wastes', 'images/nomad of the wastes.png', 'In a sun-scorched, post-apocalyptic wasteland, a lone survivor travels across vast, sand-swept dunes with a battered vehicle. Hunted by a relentless storm of sand and scavengers, they must use their wits and combat skills to survive the unforgiving landscape, holding on to a secret that could change the fate of what''s left of humanity.', 105, 'PG-13'),"
-            "('Crimson Peak Legacy', 'images/crimson peak legacy.png', 'In a desolate, mist-shrouded mountain, a young woman inherits a crumbling, gothic mansion from a long-lost relative. As she explores its labyrinthine halls, she discovers that the mansion is home to more than just dust and cobwebs—it is haunted by a malevolent, crimson-colored entity that is connected to her family''s past. She must unravel the chilling mystery before it''s too late.', 105, 'PG-13'),"
-            "('The Ghost Fleet', 'images/the ghost flet.png', 'A seasoned sailor on a quiet night at sea stumbles upon a terrifying sight: a fleet of ghostly, transparent ships emerges from a thick fog, their presence chilling the water to a dead calm. He must use his skills to outmaneuver the spectral armada and break free from their eerie supernatural pull before his own ship joins the ranks of the ghost fleet.', 105, 'PG'),"
-            "('Ironclad Heart', 'images/ironclad heart.png', 'In a dystopian future ruled by corporate war, a battle-worn mech warrior is the last line of defense for a rebellion. Powered by a mysterious, glowing heart, the mech must fight its way through a ruined metropolis, confronting the city''s ruthless robotic enforcers to deliver a message of hope to the surviving citizens.', 105, 'PG-13'),"
-            "('Sands of Fury', 'images/sands of fury.png', 'In a world consumed by an endless desert, a lone warrior on a futuristic armored bike races against a colossal, ever-expanding sandstorm. Pursued by both the forces of nature and a gang of ruthless raiders, they must navigate the treacherous landscape and find a legendary oasis that holds the key to the survival of humanity.', 105, 'PG-13'),"
-            "('The Celestial Map', 'images/the celestial map.png', 'An astronomer at a remote observatory discovers that the constellations are not just patterns of light but a cosmic map left behind by a celestial intelligence. As he deciphers its riddles, he realizes that the map is a guide to a new world. He must now protect the map from forces that want to exploit its power and embark on a journey of galactic proportions.', 105, 'PG'),"
-            "('Vanguard''s Oath', 'images/vanguards oath.png', 'In a world where magic and machinery have merged, a legendary armored warrior known as the Vanguard faces the ultimate test. They stand as the sole guardian of humanity, confronting a formidable, corrupted dragon-like creature that has laid waste to the land. After a final, devastating battle, the Vanguard must uphold their solemn oath to protect what remains and rebuild their world.', 105, 'PG-13'),"
-            "('Shadow of the Colossus', 'images/shadow of the colossus.png', 'In a world of colossal, slumbering giants, a lone swordsman embarks on a forbidden journey to revive his lost love. His quest requires him to awaken and defeat the ancient stone colossi that roam the land, but as he fights each one, he discovers a horrifying truth about their connection to the land and his own destiny.', 105, 'PG-13'),"
-            "('The Emerald Tablet', 'images/the emarald tablet.png', 'A resourceful explorer ventures deep into a lost temple, where legend says the secrets of alchemy are hidden. After navigating treacherous traps and puzzles, she discovers the fabled Emerald Tablet, which glows with an arcane energy. But a shadowy syndicate is close behind her, and she must use her wits to escape with the tablet, its secrets promising to change the course of science and magic.', 105, 'PG'),"
-            "('Rebel of the Red Planet', 'images/rebel of the red planet.png', 'In a Martian colony controlled by a tyrannical corporation, a lone rebel soldier uncovers a conspiracy that threatens to enslave all of humanity. He must fight his way across the desolate red planet, battling ruthless corporate forces while seeking a way to transmit his discovery to Earth. He is a symbol of hope for a future free from oppression.', 105, 'PG-13'),"
-            "('The Sunken Kingdom', 'images/the sunken kingdom.png', 'In a future where the oceans have reclaimed the land, a deep-sea explorer follows a cryptic signal to the bottom of the ocean. He discovers the mythical, technologically advanced kingdom of Atlantis, still pulsing with a faint light. He must navigate the city''s treacherous ruins and decipher its secrets, discovering a dark truth about its fall and the forces that still haunt it.', 105, 'PG'),"
-            "('Path of the Ronin', 'images/path of robin.png', 'A masterless samurai, disgraced by a past he cannot escape, wanders through a mystical land of spirits and treacherous forests. Haunted by his past failures, he seeks to atone for his sins, facing spiritual battles and internal demons along a misty path, with a single goal: to find a place of peace, or a worthy end.', 105, 'PG-13'),"
-            "('The Clockwork Conspiracy', 'images/the clockwork conspiracy.png', 'In a sprawling, steampunk metropolis, a cynical private detective is hired to investigate a string of murders linked to an intricate clockwork device. The trail leads him into a hidden world of brilliant but dangerous inventors and a conspiracy to control the city''s power with a sinister clockwork contraption. He must solve the mystery before the city''s time runs out.', 105, 'PG-13'),"
-            "('Legacy of the Void', 'images/legacy of the void.png', 'A lone pilot on a scavenging mission in deep space discovers a derelict, ancient space station. Upon boarding, he finds that the station holds the last remnants of a forgotten civilization and a powerful secret. As he uncovers the truth of their downfall, he realizes that the same fate awaits him if he can''t escape the station and its haunting legacy.', 105, 'PG'),"
-            "('The Obsidian Mirror', 'images/the obsidian mirror.png', 'An antiquarian acquires an ornate, ancient obsidian mirror with a dark reputation. When he looks into its depths, he discovers that the mirror is a gateway to a terrifying other-dimensional realm. As a malevolent entity from the other side tries to break through, he must find a way to destroy the mirror before its dark reflection consumes his world.', 105, 'PG-13'),"
-            "('Whispering Woods', 'images/whispering woods.png', 'A young traveler, seeking a missing sibling, enters an enchanted forest where the trees themselves seem to watch and whisper. As she ventures deeper, she discovers the woods are home to ancient spirits, some benevolent and some sinister. She must navigate the forest''s magical puzzles and face the truth of its hidden mysteries to find her missing sibling.', 105, 'PG'),"
-            "('The Final Frontier', 'images/the final fromtier.png', 'After a devastating war, a lone, battle-worn pilot on a mission of exploration discovers a wormhole-like portal in the farthest reaches of space. He decides to enter the portal, embarking on a dangerous journey to an unknown destination, hoping to find a new world for humanity and leave behind the broken universe he knows.', 105, 'PG'),"
-            "('Guardians of the Gate', 'images/guardians of the gate.png', 'A powerful, magical gate stands as the only barrier between two dimensions—one of light and one of darkness. Two elite guardians, bound by an ancient oath, must defend the gate against a malevolent force seeking to cross into their world. With their swords and magic, they are the last line of defense in a war between realms.', 105, 'PG-13'),"
-            "('The Last Spell', 'images/the last spell.png', 'After a devastating battle, a lone sorcerer is all that stands between a magical kingdom and an invading army. With his allies defeated and his power nearly depleted, he must use the last of his strength to cast a final, forbidden spell that could either save his world or destroy it.', 105, 'PG-13'),"
-            "('The Frozen Throne', 'images/the frozen throne.png', 'In a world covered in a perpetual blizzard, a young warrior embarks on a quest to defeat the tyrannical ruler who sits on the Frozen Throne. The warrior must brave the punishing snowstorms and treacherous icy lands to reach the throne room and challenge the figure who holds a dark secret about the world''s endless winter.', 105, 'PG-13'),"
-            "('The Serpent''s Kiss', 'images/the serpants kiss.png', 'A young woman seeks a cure for her village''s mysterious illness and is told of a mystical serpent in a forgotten swamp. She travels to the swamp and finds the serpent, which promises to heal her people in exchange for her soul. She must choose between the well-being of her village and her own life.', 105, 'PG-13');";
-
-        if (sqlite3_exec(db, seed_sql, 0, 0, &zErrMsg) != SQLITE_OK) 
-        {
-            std::cerr << "SQL error (Seeding): " << zErrMsg << std::endl;
+    for (const char* schema : schemas) {
+        if (sqlite3_exec(db, schema, 0, 0, &zErrMsg) != SQLITE_OK) {
+            std::cerr << "SQL error (Schema Creation): " << zErrMsg << std::endl;
             sqlite3_free(zErrMsg);
+            return;
         }
     }
+    std::cout << "All table schemas are ready." << std::endl;
 
-    // SEEDING FAKE VENUES FOR TESTING
+    // Check if the database is already seeded by looking for any user
+    int user_count = 0;
+    sqlite3_exec(db, "SELECT COUNT(*) FROM Users", callback_is_empty, &user_count, &zErrMsg);
 
-    int venue_count = 0;
-    sqlite3_exec(db, "SELECT COUNT(*) FROM Venues", callback_is_empty, &venue_count, &zErrMsg);
-    if (venue_count == 0) {
-        std::cout << "Venues table is empty. Seeding..." << std::endl;
-        const char* seed_sql =
-            "INSERT INTO Venues (Name, Location, ImageURL, AuditoriumCount, Rating) VALUES "
-            "('Blocky Multiplex', 'Downtown Cubeville', 'venues/blocky multiplex.png', 12, 4.5),"
-            "('The Redstone Cinema', 'Oak Valley', 'venues/the redstone cinema.png', 8, 5.0),"
-            "('Pixel Perfect Theaters', 'Glass Pane City', 'venues/pixel perfect.png', 16, 4.0),"
-            "('The Redstone Reel', 'Block City', 'venues/the redstone reel.png', 5, 4.6),"
-            "('Creeper Cinemas', 'Creeperville', 'venues/creeper cinemas.png', 7, 4.4),"
-            "('The Ender Screen', 'Endertown', 'venues/the ender screen.png', 6, 4.7),"
-            "('NetherFlix Theatre', 'Nether District', 'venues/netherflix.png', 8, 4.5),"
-            "('Diamond Screenplex', 'Minecart Central', 'venues/diamond screenplex.png', 10, 4.8),"
-            "('Blockbuster Pavilion', 'Craftsville', 'venues/blockbuster pavilion.png', 4, 4.3);";
-
-        if (sqlite3_exec(db, seed_sql, 0, 0, &zErrMsg) != SQLITE_OK) {
-            std::cerr << "SQL error (Seeding Venues): " << zErrMsg << std::endl;
-            sqlite3_free(zErrMsg);
-        }
-    }
-
-    int showtime_count = 0;
-    sqlite3_exec(db, "SELECT COUNT(*) FROM Showtimes", callback_is_empty, &showtime_count, &zErrMsg);
-    
-    if (showtime_count == 0) {
-        std::cout << "Showtimes table is empty. Seeding with initial data..." << std::endl;
-        // Let's create showtimes for today (e.g., 2025-08-22)
-        const char* seed_sql =
-            "INSERT INTO Showtimes (MovieID, VenueID, ShowtimeDateTime) VALUES "
-            // Movie 1 at Venue 1
-            "(1, 1, '2025-08-28 10:00:00'), (1, 1, '2025-08-28 13:30:00'), (1, 1, '2025-08-28 17:00:00'),"
-            // Movie 1 at Venue 2
-            "(1, 2, '2025-08-28 11:00:00'), (1, 2, '2025-08-28 14:30:00'),"
-            // Movie 2 at Venue 1
-            "(2, 1, '2025-08-28 18:00:00'), (2, 1, '2025-08-28 21:00:00'),"
-            // Movie 3 at Venue 3
-            "(3, 3, '2025-08-28 19:00:00'), (3, 3, '2025-08-28 22:00:00'),"
-         //Movie 3 at Venue 6
-            "(3, 6, '2025-08-28 15:00:00'), (3, 6, '2025-08-28 18:30:00'), (3, 6, '2025-08-28 22:00:00'),"
-            // Showtimes for tomorrow (e.g., 2025-08-29)
-            "(1, 1, '2025-08-29 10:00:00'), (1, 3, '2025-08-29 15:00:00'),(3, 3, '2025-08-29 14:30:00'), (1, 4, '2025-08-29 17:00:00'),"
-            "(2, 5, '2025-08-29 19:30:00'), (3, 6, '2025-08-29 21:45:00');";
+    if (user_count == 0) {
+        std::cout << "Database is empty. Seeding with master data..." << std::endl;
         
-        if (sqlite3_exec(db, seed_sql, 0, 0, &zErrMsg) != SQLITE_OK) {
-            std::cerr << "SQL error (Seeding Showtimes): " << zErrMsg << std::endl;
+        // Get the entire SQL script from the generated header file
+        std::string master_seed_sql = data::generateAllSeedSQL();
+        
+        // Execute the entire script at once
+        if (sqlite3_exec(db, master_seed_sql.c_str(), 0, 0, &zErrMsg) != SQLITE_OK) {
+            std::cerr << "FATAL SQL ERROR (Master Seeding): " << zErrMsg << std::endl;
             sqlite3_free(zErrMsg);
-        }
-    }
-    
-    int template_count = 0;
-    sqlite3_exec(db, "SELECT COUNT(*) FROM AuditoriumTemplates", callback_is_empty, &template_count, &zErrMsg);
-    if (template_count == 0) {
-        std::cout << "AuditoriumTemplates table is empty. Seeding..." << std::endl;
-        const char* seed_sql =
-            "INSERT INTO AuditoriumTemplates (Description, PremiumRows, NormalRows, Section1Seats, Section2Seats, Section3Seats) VALUES "
-            "('Cozy Classic', 1, 7, 16, 0, 0),"         // Template 1: Small, 1 section
-            "('Standard Twin', 2, 8, 8, 8, 0),"         // Template 2: Medium, 2 sections
-            "('Grand Hall', 2, 10, 6, 12, 6),"        // Template 3: Large, 3 sections
-            "('Intimate Boutique', 1, 5, 12, 0, 0),"    // Template 4: Very Small, 1 section
-            "('Mega Screen', 3, 12, 8, 16, 8);";      // Template 5: Huge, 3 sections
-        if (sqlite3_exec(db, seed_sql, 0, 0, &zErrMsg) != SQLITE_OK) {
-            std::cerr << "SQL error (Seeding Templates): " << zErrMsg << std::endl;
-            sqlite3_free(zErrMsg);
-        }
-    }
-    int auditorium_count = 0;
-    sqlite3_exec(db, "SELECT COUNT(*) FROM Auditoriums", callback_is_empty, &auditorium_count, &zErrMsg);
-    if (auditorium_count == 0) {
-        std::cout << "Auditoriums table is empty. Seeding..." << std::endl;
-        const char* seed_sql =
-            "INSERT INTO Auditoriums (VenueID, AuditoriumNumber, TemplateID, NormalPrice, PremiumPrice) VALUES "
-            // Venue 1 gets a mix of templates
-            "(1, 1, 2, 10.50, 15.50)," // Venue 1, Audi 1 uses Template 2
-            "(1, 2, 3, 11.00, 16.50)," // Venue 1, Audi 2 uses Template 3
-            // Venue 2 gets a small and a standard
-            "(2, 1, 1, 12.00, 18.00)," // Venue 2, Audi 1 uses Template 1
-            "(2, 2, 2, 12.00, 18.00)," // Venue 2, Audi 2 uses Template 2
-            // Venue 3 gets a huge screen
-            "(3, 1, 5, 14.00, 22.00);"; // Venue 3, Audi 1 uses Template 5
-        if (sqlite3_exec(db, seed_sql, 0, 0, &zErrMsg) != SQLITE_OK) {
-            std::cerr << "SQL error (Seeding Auditoriums): " << zErrMsg << std::endl;
-            sqlite3_free(zErrMsg);
+        } else {
+            std::cout << "Master data seeding successful." << std::endl;
         }
     }
 
-     
-    else 
-    {
-        std::cout << "Database is ready." << std::endl;
-    }
-
+    std::cout << "Database is ready." << std::endl;
 }
-
 int main() 
 {
     init_database();
