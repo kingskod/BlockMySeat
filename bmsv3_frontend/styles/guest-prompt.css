@@ -1,4 +1,12 @@
-#guest-prompt-overlay {
+/* 
+  This single file styles all prompt overlays, including the
+  guest selection on seats.html and the logout confirmation.
+*/
+
+/* --- 1. Overlay Container --- */
+/* This rule applies to both the guest and logout overlays.
+   NOTE: It no longer contains 'opacity: 1'. */
+#guest-prompt-overlay, #logout-prompt-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -11,10 +19,17 @@
     z-index: 2000;
     transition: opacity 0.3s ease;
 }
-#guest-prompt-overlay.hidden {
+
+/* --- THIS IS THE CRITICAL FIX --- */
+/* This rule is now more specific by using the IDs, so it will correctly override the base style. */
+#guest-prompt-overlay.hidden, #logout-prompt-overlay.hidden {
     opacity: 0;
     pointer-events: none;
 }
+
+
+/* --- 2. Prompt Box --- */
+/* This rule styles the white box for both prompts */
 #guest-prompt, #logout-prompt {
     background-color: var(--bg-secondary);
     color: var(--text-primary);
@@ -22,35 +37,23 @@
     border-radius: var(--border-radius);
     text-align: center;
     box-shadow: 0 10px 30px var(--shadow-color);
-    position: relative; /* Needed for positioning the close button */
 }
 
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    background: transparent;
-    border: none;
-    font-size: 2em;
-    color: var(--text-secondary);
-    cursor: pointer;
-    line-height: 1;
-}
-
-.close-btn:hover {
-    color: var(--text-primary);
-}
-
-#logout-prompt h3 {
+#logout-prompt h3, #guest-prompt h3 {
     margin-top: 0;
     margin-bottom: 25px;
 }
+
+
+/* --- 3. Guest-Specific Styles --- */
+/* These rules only apply to the guest selection prompt */
 #guest-count-container {
     display: flex;
     justify-content: center;
     gap: 10px;
     margin: 25px 0;
 }
+
 .guest-count-btn {
     width: 45px;
     height: 45px;
@@ -62,6 +65,7 @@
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 }
+
 .guest-count-btn.selected {
     background-color: var(--text-accent);
     color: var(--bg-secondary);
@@ -69,6 +73,10 @@
     transform: scale(1.1);
     font-weight: bold;
 }
+
+
+/* --- 4. General Button Styles --- */
+/* Styles for the buttons at the bottom of the prompts */
 .prompt-buttons button {
     background-color: var(--bg-tertiary);
     color: var(--text-primary);
@@ -78,14 +86,23 @@
     font-size: 1em;
     cursor: pointer;
     margin: 0 10px;
+    transition: opacity 0.2s;
 }
-#proceed-btn, #logout-confirm-btn {
+
+.prompt-buttons button:hover {
+    opacity: 0.9;
+}
+
+/* Specific style for the main "Proceed" button */
+#proceed-btn {
     background-color: var(--text-accent);
     color: var(--bg-secondary);
     border-color: var(--text-accent);
 }
 
-#logout-confirm-btn {
-    background-color: #c0392b; /* A red color for logout */
-    border-color: #c0392b;
+/* Specific style for the "Log Out" confirmation button */
+#confirm-logout-btn {
+    background-color: #ef4444; /* Red for destructive actions */
+    color: white;
+    border-color: #ef4444;
 }

@@ -42,7 +42,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const movieGrid = document.querySelector('.grid-content');
     const cardTemplate = document.getElementById('movie-card-template');
 
+// --- Logout Confirmation Logic ---
+    const logoutButton = document.getElementById('logout-button');
+    const logoutPromptOverlay = document.getElementById('logout-prompt-overlay');
+    const confirmLogoutBtn = document.getElementById('confirm-logout-btn');
+    const cancelLogoutBtn = document.getElementById('cancel-logout-btn');
 
+    // Ensure all elements exist before adding listeners
+    if (logoutButton && logoutPromptOverlay && confirmLogoutBtn && cancelLogoutBtn) {
+        
+        // 1. When the user clicks the "Log out" link in the sidebar
+        logoutButton.addEventListener('click', (event) => {
+            event.preventDefault(); // Stop the link from navigating anywhere
+            // Show the prompt by removing the 'hidden' class
+            logoutPromptOverlay.classList.remove('hidden');
+        });
+
+        // 2. When the user clicks the "Cancel" button inside the prompt
+        cancelLogoutBtn.addEventListener('click', () => {
+            // Hide the prompt by adding the 'hidden' class back
+            logoutPromptOverlay.classList.add('hidden');
+        });
+
+        // 3. When the user clicks the final "Log Out" button
+        confirmLogoutBtn.addEventListener('click', () => {
+            // Clear the user's session from the browser
+            sessionStorage.removeItem('userToken');
+            sessionStorage.removeItem('userId');
+            
+            // Redirect to the login page
+            window.location.href = 'index.html';
+        });
+    }
     // fetch movies type shi
 
     const fetchMovies = async () => {
@@ -114,35 +145,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Logout Prompt Logic ---
-    const logoutButton = document.getElementById('logout-button');
-    const logoutPrompt = document.getElementById('logout-prompt-overlay');
-    const logoutConfirmBtn = document.getElementById('logout-confirm-btn');
-    const logoutCancelBtn = document.getElementById('logout-cancel-btn');
-    const logoutCloseBtn = document.getElementById('logout-close-btn');
-
-    if (logoutButton && logoutPrompt) {
-        logoutButton.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent default link behavior
-            logoutPrompt.classList.remove('hidden');
-        });
-
-        const closeLogoutPrompt = () => {
-            logoutPrompt.classList.add('hidden');
-        };
-
-        const continueAsGuest = () => {
-            sessionStorage.clear();
-            closeLogoutPrompt();
-            // Optional: You might want to refresh the page to update the UI
-            // window.location.reload();
-        };
-
-        logoutCancelBtn.addEventListener('click', continueAsGuest);
-        logoutCloseBtn.addEventListener('click', closeLogoutPrompt);
-
-        logoutConfirmBtn.addEventListener('click', () => {
-            sessionStorage.clear();
-            window.location.href = 'index.html';
-        });
-    }
+    
 });

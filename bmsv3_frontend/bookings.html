@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="styles/main-layout.css">
     <link rel="stylesheet" href="styles/sidebar.css">
     <link rel="stylesheet" href="styles/bookings.css">
-    
+    <link rel="stylesheet" href="styles/guest-prompt.css">
     <!-- Your Font Awesome Kit Script -->
     <script src="https://kit.fontawesome.com/YOUR_KIT_CODE.js" crossorigin="anonymous"></script>
 </head>
@@ -100,18 +100,16 @@
         </div>
     </div>
 
-    <!-- Logout Prompt Overlay -->
-    <div id="logout-prompt-overlay" class="hidden">
-        <div id="logout-prompt">
-            <button id="logout-close-btn" class="close-btn">&times;</button>
+    <div id="logout-prompt-overlay" class="prompt-overlay hidden">
+        <div id="logout-prompt" class="prompt-box">
             <h3>Are you sure you want to log out?</h3>
             <div class="prompt-buttons">
-                <button id="logout-cancel-btn">Continue as Guest</button>
-                <button id="logout-confirm-btn">Logout</button>
+                <button id="cancel-logout-btn">Cancel</button>
+                <button id="confirm-logout-btn">Log Out</button>
             </div>
         </div>
-    </div>
 
     <script src="bookings.js"></script>
+    
 </body>
 </html>
