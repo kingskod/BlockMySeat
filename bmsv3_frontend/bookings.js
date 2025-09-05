@@ -94,4 +94,37 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     initializePage();
+
+    // --- Logout Prompt Logic ---
+    const logoutButton = document.getElementById('logout-button');
+    const logoutPrompt = document.getElementById('logout-prompt-overlay');
+    const logoutConfirmBtn = document.getElementById('logout-confirm-btn');
+    const logoutCancelBtn = document.getElementById('logout-cancel-btn');
+    const logoutCloseBtn = document.getElementById('logout-close-btn');
+
+    if (logoutButton && logoutPrompt) {
+        logoutButton.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default link behavior
+            logoutPrompt.classList.remove('hidden');
+        });
+
+        const closeLogoutPrompt = () => {
+            logoutPrompt.classList.add('hidden');
+        };
+
+        const continueAsGuest = () => {
+            sessionStorage.clear();
+            closeLogoutPrompt();
+            // Optional: You might want to refresh the page to update the UI
+            // window.location.reload();
+        };
+
+        logoutCancelBtn.addEventListener('click', continueAsGuest);
+        logoutCloseBtn.addEventListener('click', closeLogoutPrompt);
+
+        logoutConfirmBtn.addEventListener('click', () => {
+            sessionStorage.clear();
+            window.location.href = 'index.html';
+        });
+    }
 });
