@@ -41,7 +41,8 @@
     /* This rule is new to specify its grid position */
     grid-column: 1 / 2; 
     position: sticky;
-    top: 90px;
+    left:0;
+    top: 70px;
     height: calc(100vh - 110px);
     background-color: var(--bg-secondary);
     border-radius: var(--border-radius);

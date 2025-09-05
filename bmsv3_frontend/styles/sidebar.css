@@ -3,7 +3,7 @@
 .sidebar {
     display: flex;
     flex-direction: column;
-    gap: 40px; /* Space between logo, menu, and general sections */
+    gap: 40px;
 }
 
 /* --- Logo --- */
@@ -12,7 +12,6 @@
     align-items: center;
     gap: 10px;
 }
-
 .logo-text {
     font-size: var(--font-size-large);
     margin: 0;
@@ -25,7 +24,6 @@
     display: flex;
     flex-direction: column;
 }
-
 .nav-title {
     font-size: var(--font-size-small);
     color: var(--text-secondary);
@@ -33,20 +31,21 @@
     letter-spacing: 1px;
     margin-bottom: 15px;
 }
-
 .sidebar-nav ul, .sidebar-general ul {
     list-style: none;
     padding: 0;
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Space between menu items */
+    gap: 0px;
 }
 
+/* === CORRECTED .nav-link RULE === */
+/* This rule is for standard links with an icon and text */
 .nav-link {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 15px; /* This creates the space between the icon and text */
     padding: 12px 15px;
     border-radius: var(--border-radius);
     text-decoration: none;
@@ -54,76 +53,71 @@
     font-weight: 500;
     transition: background-color 0.2s, color 0.2s;
 }
-
 .nav-link:hover {
     background-color: var(--bg-tertiary);
     color: var(--text-primary);
 }
-
-/* Style for the currently active link */
 .nav-link.active {
     background-color: var(--bg-tertiary);
     color: var(--text-accent);
     font-weight: bold;
 }
-
-.nav-link span {
-    font-size: 20px; /* Icon size */
+.nav-link i {
+    font-size: 20px;
+    width: 24px;
+    text-align: center;
 }
 
 /* Push the General section to the bottom */
 .sidebar-general {
     margin-top: auto;
 }
-/* Add these rules to the end of the file for the dark mode toggle */
-.theme-switch-wrapper {
+
+/* === CORRECTED THEME TOGGLE STYLES === */
+/* This is a NEW, SEPARATE rule just for the toggle container */
+.sidebar-toggle-item {
     display: flex;
+    justify-content: space-between; /* This pushes the text and toggle apart */
     align-items: center;
-    gap: 15px;
     padding: 12px 15px;
     color: var(--text-secondary);
     font-weight: 500;
 }
-.theme-switch {
-    display: inline-block;
-    height: 24px;
-    position: relative;
-    width: 44px;
+.sidebar-toggle-item span {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
-.theme-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+.sidebar-toggle-item i {
+    font-size: 20px;
+    width: 24px;
+    text-align: center;
 }
-.slider {
-    background-color: #ccc;
-    bottom: 0;
+
+.theme-toggle {
+    width: 50px;
+    height: 26px;
+    background-color: var(--bg-tertiary);
+    border-radius: 50px;
+    padding: 3px;
     cursor: pointer;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-    transition: .4s;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    transition: background-color 0.3s;
+    flex-shrink: 0;
 }
-.slider:before {
-    background-color: #fff;
-    bottom: 4px;
-    content: "";
-    height: 16px;
-    left: 4px;
-    position: absolute;
-    transition: .4s;
-    width: 16px;
+.toggle-indicator {
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
 }
-input:checked + .slider {
+.night-mode .theme-toggle {
     background-color: var(--text-accent);
 }
-input:checked + .slider:before {
-    transform: translateX(20px);
-}
-.slider.round {
-    border-radius: 34px;
-}
-.slider.round:before {
-    border-radius: 50%;
+.night-mode .toggle-indicator {
+    transform: translateX(24px);
 }

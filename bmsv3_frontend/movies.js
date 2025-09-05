@@ -83,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const themeSwitch = document.getElementById('theme-checkbox');
     const body = document.body;
 
-    // Function to apply the saved theme
     const applyTheme = (theme) => {
         if (theme === 'night') {
             body.classList.remove('day-mode');
@@ -96,13 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Check for a saved theme in localStorage
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
         applyTheme(savedTheme);
     }
 
-    // Event listener for the toggle switch
     themeSwitch.addEventListener('change', () => {
         if (themeSwitch.checked) {
             localStorage.setItem('theme', 'night');

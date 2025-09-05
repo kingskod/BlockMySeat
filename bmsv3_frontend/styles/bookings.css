@@ -1,0 +1,66 @@
+/* Styles for the bookings page */
+
+.booking-section {
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    padding: var(--padding-main);
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.booking-section-title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.6em;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+.booking-list {
+    display: grid;
+    /* Creates a responsive grid for the cards */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.booking-card {
+    display: flex;
+    gap: 15px;
+    background-color: var(--bg-tertiary);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    border: 1px solid var(--border-color);
+}
+
+.booking-poster {
+    width: 80px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 5px;
+    flex-shrink: 0; /* Prevent image from shrinking */
+}
+
+.booking-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.booking-movie-title {
+    font-size: 1.2em;
+    color: var(--text-primary);
+    margin: 0 0 5px 0;
+}
+
+.booking-venue-name {
+    font-size: 1em;
+    color: var(--text-secondary);
+    margin: 0 0 15px 0;
+}
+
+.booking-info {
+    margin-top: auto; /* Pushes this to the bottom */
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+}

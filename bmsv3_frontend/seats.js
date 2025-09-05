@@ -3,10 +3,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Get data from URL ---
     const urlParams = new URLSearchParams(window.location.search);
-    const movieTitle = decodeURIComponent(urlParams.get('movie') || '');
+    const movieTitle = decodeURIComponent(urlParams.get('movie'));
     const showtimeId = urlParams.get('showtime_id');
     const auditoriumId = urlParams.get('auditorium_id');
-    const date = urlParams.get('date');
     const time = urlParams.get('time');
 
     // --- DOM Elements ---
@@ -16,17 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const goBackButton = document.getElementById('go-back-btn');
     const guestCountContainer = document.getElementById('guest-count-container');
     const checkoutBtn = document.getElementById('checkout-btn');
-    const movieTitleHeader = document.getElementById('movie-title-header');
-    const selectionInfoHeader = document.getElementById('selection-info-header');
 
     let numberOfGuests = 1;
     let selectedSeats = [];
 
-    // --- Dark Mode Toggle Logic ---
+    // --- Dark Mode Logic ---
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
 
-    // Function to apply the theme
     const applyTheme = (theme) => {
         if (theme === 'night') {
             body.classList.remove('day-mode');
@@ -37,44 +33,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // 1. Check for a saved theme in localStorage when the page loads
+    // Check for saved theme in localStorage
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
         applyTheme(savedTheme);
-    } else {
-        applyTheme('day'); // Default to day mode if nothing is saved
     }
 
-    // 2. Add the event listener for the new toggle switch
+    // Add event listener to the theme toggle
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
-            // Check which theme is currently active and switch to the other
-            if (body.classList.contains('day-mode')) {
-                localStorage.setItem('theme', 'night');
-                applyTheme('night');
-            } else {
-                localStorage.setItem('theme', 'day');
-                applyTheme('day');
-            }
+            const currentTheme = body.classList.contains('night-mode') ? 'night' : 'day';
+            const newTheme = currentTheme === 'night' ? 'day' : 'night';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
         });
     }
 
     // --- Main Initialization ---
     const initializePage = () => {
-        if (!movieTitle || !showtimeId || !auditoriumId || !time || !date) {
-            document.body.innerHTML = "<h1>Error: Missing details in URL. Please go back and select a showtime.</h1>";
+        if (!movieTitle || !showtimeId || !auditoriumId || !time) {
+            document.body.innerHTML = "<h1>Error: Missing details in URL.</h1>";
             return;
         }
-
-        // Format the date for display (e.g., "August 22")
-        const displayDate = new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric'
-        });
-
-        movieTitleHeader.textContent = movieTitle;
-        selectionInfoHeader.textContent = `Date: ${displayDate} | Time: ${time}`;
-
+        document.getElementById('movie-title-header').textContent = movieTitle;
+        document.getElementById('selection-info-header').textContent = `Time: ${time}`;
         for (let i = 1; i <= 8; i++) {
             const button = document.createElement('button');
             button.classList.add('guest-count-btn');
@@ -82,17 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
             button.textContent = i;
             if (i === 1) button.classList.add('selected');
             guestCountContainer.appendChild(button);
-        }
-
-        // Remove the link from the logo and the check mark for the theme switch
-        const headerLogo = document.querySelector('.header-logo .logo-text');
-        if (headerLogo) {
-            headerLogo.removeAttribute('href');
-        }
-
-        const themeSwitchLabel = document.querySelector('.theme-switch-wrapper label');
-        if (themeSwitchLabel) {
-            themeSwitchLabel.style.display = 'none';
         }
     };
 
@@ -110,71 +81,90 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // === REWRITTEN LAYOUT GENERATION LOGIC ===
+    // === MODIFIED: LAYOUT GENERATION LOGIC ===
     const generateLayout = async () => {
-        const layouts = {
-            1: { sections: [10, 10], premium_rows: 2, total_rows: 8 },
-            2: { sections: [8, 12, 8], premium_rows: 1, total_rows: 10 },
-            3: { sections: [20], premium_rows: 1, total_rows: 9 }
-        };
-        const auditoriumLayout = layouts[auditoriumId] || layouts[1];
-        const occupiedSeats = await fetchOccupiedSeats();
-        theaterContainer.innerHTML = '';
+        try {
+            // 1. Fetch all necessary data from the backend
+            const [layoutDetails, occupiedSeats] = await Promise.all([
+                fetchAuditoriumLayout(),
+                fetchOccupiedSeats()
+            ]);
 
-        // Create all row containers first
-        const rowElements = [];
-        for (let r = 0; r < auditoriumLayout.total_rows; r++) {
-            const rowDiv = document.createElement('div');
-            rowDiv.classList.add('seat-row');
-            rowElements.push(rowDiv);
-        }
+            if (!layoutDetails) {
+                theaterContainer.innerHTML = "<p>Could not load auditorium layout.</p>";
+                return;
+            }
 
-        // Populate each row with seats from all sections
-        let totalSeatsSoFar = 0;
-        auditoriumLayout.sections.forEach((sectionSeatCount, sectionIndex) => {
-            const seatBlock = document.createElement('div');
-            seatBlock.classList.add('seat-block');
+            theaterContainer.innerHTML = ''; // Clear loading message
+            const totalRows = layoutDetails.premium_rows + layoutDetails.normal_rows;
 
-            for (let r = 0; r < auditoriumLayout.total_rows; r++) {
-                const rowLetter = String.fromCharCode(65 + r);
-                const rowDiv = document.createElement('div'); // A temporary container for this section's seats
-                rowDiv.classList.add('seat-row-segment');
+            // 2. Create the row containers with letters
+            const rowElements = [];
+            for (let r = 0; r < totalRows; r++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.classList.add('seat-row');
+                const letterDiv = document.createElement('div');
+                letterDiv.classList.add('row-letter');
+                letterDiv.textContent = String.fromCharCode(65 + r); // A, B, C...
+                rowDiv.appendChild(letterDiv);
+                rowElements.push(rowDiv);
+            }
 
-                // Add row letter ONLY to the first block
-                if (sectionIndex === 0) {
-                    const letterDiv = document.createElement('div');
-                    letterDiv.classList.add('row-letter');
-                    letterDiv.textContent = rowLetter;
-                    rowElements[r].appendChild(letterDiv);
-                }
+            // 3. Populate rows with seats, section by section
+            let totalSeatsSoFar = 0;
+            layoutDetails.sections.forEach((sectionSeatCount, sectionIndex) => {
+                const seatBlock = document.createElement('div');
+                seatBlock.classList.add('seat-block');
 
-                for (let c = 1; c <= sectionSeatCount; c++) {
-                    const seatNumber = c + totalSeatsSoFar;
-                    const seatId = `${rowLetter}${seatNumber}`;
-                    const seatDiv = document.createElement('div');
-                    seatDiv.classList.add('seat');
-                    seatDiv.classList.add(r < auditoriumLayout.premium_rows ? 'premium' : 'normal');
-                    seatDiv.dataset.seatId = seatId;
-                    seatDiv.dataset.row = rowLetter;
-                    seatDiv.dataset.col = seatNumber;
+                for (let r = 0; r < totalRows; r++) {
+                    const rowLetter = String.fromCharCode(65 + r);
+                    const rowSegment = document.createElement('div');
+                    rowSegment.classList.add('seat-row-segment');
 
-                    if (occupiedSeats.includes(seatId)) {
-                        seatDiv.classList.add('occupied');
+                    for (let c = 1; c <= sectionSeatCount; c++) {
+                        const seatNumber = c + totalSeatsSoFar;
+                        const seatId = `${rowLetter}${seatNumber}`;
+                        const seatDiv = document.createElement('div');
+                        seatDiv.classList.add('seat');
+                        seatDiv.classList.add(r < layoutDetails.premium_rows ? 'premium' : 'normal');
+                        seatDiv.dataset.seatId = seatId;
+                        seatDiv.dataset.row = rowLetter;
+                        seatDiv.dataset.col = seatNumber;
+
+                        if (occupiedSeats.includes(seatId)) {
+                            seatDiv.classList.add('occupied');
+                        }
+                        rowSegment.appendChild(seatDiv);
                     }
-                    rowDiv.appendChild(seatDiv);
+                    seatBlock.appendChild(rowSegment);
                 }
-                seatBlock.appendChild(rowDiv);
-            }
-            theaterContainer.appendChild(seatBlock);
+                theaterContainer.appendChild(seatBlock);
 
-            // Add passage if not the last section
-            if (sectionIndex < auditoriumLayout.sections.length - 1) {
-                const passageDiv = document.createElement('div');
-                passageDiv.classList.add('passage');
-                theaterContainer.appendChild(passageDiv);
-            }
-            totalSeatsSoFar += sectionSeatCount;
-        });
+                // Add passage if not the last section
+                if (sectionIndex < layoutDetails.sections.length - 1) {
+                    const passageDiv = document.createElement('div');
+                    passageDiv.classList.add('passage');
+                    theaterContainer.appendChild(passageDiv);
+                }
+                totalSeatsSoFar += sectionSeatCount;
+            });
+
+        } catch (error) {
+            console.error("Failed to generate layout:", error);
+            theaterContainer.innerHTML = "<p>Error generating seat layout.</p>";
+        }
+    };
+
+    const fetchAuditoriumLayout = async () => {
+        try {
+            const response = await fetch(`${serverUrl}/auditorium-details/${auditoriumId}`);
+            if (!response.ok) return null;
+            const data = await response.json();
+            return data.layout; // Return just the layout object
+        } catch (error) {
+            console.error("Could not fetch auditorium layout:", error);
+            return null;
+        }
     };
 
     const fetchOccupiedSeats = async () => {
@@ -188,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- RE-INTEGRATED: Advanced Seat Selection Logic ---
+    // --- Seat Selection Logic  ---
     theaterContainer.addEventListener('click', (e) => {
         const clickedSeat = e.target;
         if (!clickedSeat.classList.contains('seat') || clickedSeat.classList.contains('occupied')) {

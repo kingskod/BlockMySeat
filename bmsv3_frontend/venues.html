@@ -34,7 +34,7 @@
         <div class="header-right">
             <nav class="global-nav">
                 <a href="movies.html">Movies</a>
-                <a href="#">Bookings</a>
+                <a href="bookings.html">Bookings</a>
             </nav>
             <div class="header-profile">
                 <img src="images/user-avatar.png" alt="User Avatar">
@@ -57,13 +57,14 @@
             <div class="sidebar-general">
                 <p class="nav-title">GENERAL</p>
                 <ul>
-                    <li class="theme-switch-wrapper">
-                        <label class="theme-switch" for="theme-checkbox">
-                            <input type="checkbox" id="theme-checkbox" />
-                            <div class="slider round"></div>
-                        </label>
-                        <span>Dark Mode</span>
+                    <!-- This now has its own unique class and is NOT a nav-link -->
+                    <li class="sidebar-toggle-item">
+                        <span><i class="fa-solid fa-moon"></i> Dark Mode</span>
+                        <div class="theme-toggle" id="sidebar-theme-toggle">
+                            <div class="toggle-indicator"></div>
+                        </div>
                     </li>
+                    <!-- The other links remain as they were -->
                     <li><a href="#" class="nav-link"><i class="fa-solid fa-gear"></i> Settings</a></li>
                     <li><a href="#" id="logout-button" class="nav-link"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></li>
                 </ul>

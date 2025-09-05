@@ -28,37 +28,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeSwitch = document.getElementById('theme-checkbox');
     const body = document.body;
 
-    // Function to apply the theme and save the preference
     const applyTheme = (theme) => {
         if (theme === 'night') {
             body.classList.remove('day-mode');
             body.classList.add('night-mode');
-            if (themeSwitch) themeSwitch.checked = true;
+            themeSwitch.checked = true;
         } else {
             body.classList.remove('night-mode');
             body.classList.add('day-mode');
-            if (themeSwitch) themeSwitch.checked = false;
+            themeSwitch.checked = false;
         }
     };
 
-    // 1. Check for a saved theme in localStorage when the page loads
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
         applyTheme(savedTheme);
     }
 
-    // 2. Add the event listener for the toggle switch
-    if (themeSwitch) {
-        themeSwitch.addEventListener('change', () => {
-            if (themeSwitch.checked) {
-                localStorage.setItem('theme', 'night');
-                applyTheme('night');
-            } else {
-                localStorage.setItem('theme', 'day');
-                applyTheme('day');
-            }
-        });
-    }
+    themeSwitch.addEventListener('change', () => {
+        if (themeSwitch.checked) {
+            localStorage.setItem('theme', 'night');
+            applyTheme('night');
+        } else {
+            localStorage.setItem('theme', 'day');
+            applyTheme('day');
+        }
+    });
     // === END OF CORRECTED LOGIC ===
 
     // --- Logout Prompt Logic ---

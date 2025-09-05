@@ -26,7 +26,6 @@
     font-size: 1.8em;
     font-weight: 700;
     color: var(--text-primary);
-    text-decoration: none;
     cursor: default; /* Remove pointer cursor since it's no longer a link */
 }
 .search-bar {
@@ -116,3 +115,6 @@
     transform: translateX(24px); /* Move the circle to the right */
 }
 
+.theme-switch-wrapper label {
+    display: none; /* Hide the check mark for the theme switch */
+}
