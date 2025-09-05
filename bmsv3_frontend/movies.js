@@ -80,35 +80,38 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     fetchMovies();
-        const themeSwitch = document.getElementById('theme-checkbox');
     const body = document.body;
+    const themeToggle = document.getElementById('sidebar-theme-toggle'); // Correct ID for the sidebar toggle
 
+    // --- Dark Mode Logic (Complete and Correct) ---
     const applyTheme = (theme) => {
         if (theme === 'night') {
             body.classList.remove('day-mode');
             body.classList.add('night-mode');
-            themeSwitch.checked = true;
         } else {
             body.classList.remove('night-mode');
             body.classList.add('day-mode');
-            themeSwitch.checked = false;
         }
     };
 
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
         applyTheme(savedTheme);
+    } else {
+        applyTheme('day'); // Default to day mode
     }
 
-    themeSwitch.addEventListener('change', () => {
-        if (themeSwitch.checked) {
-            localStorage.setItem('theme', 'night');
-            applyTheme('night');
-        } else {
-            localStorage.setItem('theme', 'day');
-            applyTheme('day');
-        }
-    });
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            if (body.classList.contains('day-mode')) {
+                localStorage.setItem('theme', 'night');
+                applyTheme('night');
+            } else {
+                localStorage.setItem('theme', 'day');
+                applyTheme('day');
+            }
+        });
+    }
 
     // --- Logout Prompt Logic ---
     const logoutButton = document.getElementById('logout-button');
