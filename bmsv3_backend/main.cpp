@@ -5,8 +5,8 @@
 // Standard C++ and library headers go NEXT.
 #include <iostream>
 #include <string>
-#include <random> // For generating session tokens
-#include <sstream> // For generating session tokens
+#include <random> 
+#include <sstream>
 #include <vector>
 #include <sqlite3.h>
 #include "include/json.hpp"
@@ -41,15 +41,67 @@ void init_database() {
     }
     char* zErrMsg = 0;
 
-    // Define all table creation schemas here
+    // --- All Table Schemas, Fully Defined ---
     const char* schemas[] = {
-        "CREATE TABLE IF NOT EXISTS Users (...);", // Paste your full CREATE TABLE Users string here
-        "CREATE TABLE IF NOT EXISTS Movies (...);", // Paste your full CREATE TABLE Movies string here
-        "CREATE TABLE IF NOT EXISTS Venues (...);",
-        "CREATE TABLE IF NOT EXISTS AuditoriumTemplates (...);",
-        "CREATE TABLE IF NOT EXISTS Auditoriums (...);",
-        "CREATE TABLE IF NOT EXISTS Showtimes (...);",
-        "CREATE TABLE IF NOT EXISTS Bookings (...);"
+        "CREATE TABLE IF NOT EXISTS Users ("
+        "UserID INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "Username TEXT UNIQUE NOT NULL,"
+        "Email TEXT UNIQUE NOT NULL,"
+        "Password TEXT NOT NULL,"
+        "SessionToken TEXT);",
+
+        "CREATE TABLE IF NOT EXISTS Movies ("
+        "MovieID INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "Title TEXT NOT NULL,"
+        "PosterURL TEXT,"
+        "Synopsis TEXT,"
+        "DurationMinutes INTEGER,"
+        "Rating TEXT);",
+
+        "CREATE TABLE IF NOT EXISTS Venues ("
+        "VenueID INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "Name TEXT NOT NULL,"
+        "Location TEXT,"
+        "ImageURL TEXT,"
+        "AuditoriumCount INTEGER,"
+        "Rating REAL);",
+
+        "CREATE TABLE IF NOT EXISTS AuditoriumTemplates ("
+        "TemplateID INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "Description TEXT,"
+        "PremiumRows INTEGER,"
+        "NormalRows INTEGER,"
+        "Section1Seats INTEGER,"
+        "Section2Seats INTEGER,"
+        "Section3Seats INTEGER);",
+
+        "CREATE TABLE IF NOT EXISTS Auditoriums ("
+        "AuditoriumID INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "VenueID INTEGER,"
+        "AuditoriumNumber INTEGER NOT NULL,"
+        "TemplateID INTEGER,"
+        "NormalPrice REAL,"
+        "PremiumPrice REAL,"
+        "FOREIGN KEY(VenueID) REFERENCES Venues(VenueID),"
+        "FOREIGN KEY(TemplateID) REFERENCES AuditoriumTemplates(TemplateID));",
+
+        "CREATE TABLE IF NOT EXISTS Showtimes ("
+        "ShowtimeID INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "MovieID INTEGER,"
+        "VenueID INTEGER,"
+        "AuditoriumID INTEGER,"
+        "ShowtimeDateTime TEXT NOT NULL,"
+        "FOREIGN KEY(MovieID) REFERENCES Movies(MovieID),"
+        "FOREIGN KEY(VenueID) REFERENCES Venues(VenueID),"
+        "FOREIGN KEY(AuditoriumID) REFERENCES Auditoriums(AuditoriumID));",
+
+        "CREATE TABLE IF NOT EXISTS Bookings ("
+        "BookingID INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "ShowtimeID INTEGER,"
+        "UserID INTEGER,"
+        "SeatIdentifier TEXT NOT NULL,"
+        "FOREIGN KEY(ShowtimeID) REFERENCES Showtimes(ShowtimeID),"
+        "FOREIGN KEY(UserID) REFERENCES Users(UserID));"
     };
 
     for (const char* schema : schemas) {
@@ -62,23 +114,60 @@ void init_database() {
     std::cout << "All table schemas are ready." << std::endl;
 
     // Check if the database is already seeded by looking for any user
-    int user_count = 0;
+     int user_count = 0;
     sqlite3_exec(db, "SELECT COUNT(*) FROM Users", callback_is_empty, &user_count, &zErrMsg);
 
     if (user_count == 0) {
         std::cout << "Database is empty. Seeding with master data..." << std::endl;
         
-        // Get the entire SQL script from the generated header file
-        std::string master_seed_sql = data::generateAllSeedSQL();
+        // --- THIS IS THE NEW DEBUGGING LOGIC ---
+        // We execute the seeding for each table one by one.
         
-        // Execute the entire script at once
-        if (sqlite3_exec(db, master_seed_sql.c_str(), 0, 0, &zErrMsg) != SQLITE_OK) {
-            std::cerr << "FATAL SQL ERROR (Master Seeding): " << zErrMsg << std::endl;
-            sqlite3_free(zErrMsg);
-        } else {
-            std::cout << "Master data seeding successful." << std::endl;
+        if (sqlite3_exec(db, data::getUsersSQL().c_str(), 0, 0, &zErrMsg) != SQLITE_OK) {
+            std::cerr << "FATAL SQL ERROR (Seeding Users): " << zErrMsg << std::endl;
+            sqlite3_free(zErrMsg); return;
         }
+        std::cout << "Users seeded successfully." << std::endl;
+
+        if (sqlite3_exec(db, data::getMoviesSQL().c_str(), 0, 0, &zErrMsg) != SQLITE_OK) {
+            std::cerr << "FATAL SQL ERROR (Seeding Movies): " << zErrMsg << std::endl;
+            sqlite3_free(zErrMsg); return;
+        }
+        std::cout << "Movies seeded successfully." << std::endl;
+
+        if (sqlite3_exec(db, data::getVenuesSQL().c_str(), 0, 0, &zErrMsg) != SQLITE_OK) {
+            std::cerr << "FATAL SQL ERROR (Seeding Venues): " << zErrMsg << std::endl;
+            sqlite3_free(zErrMsg); return;
+        }
+        std::cout << "Venues seeded successfully." << std::endl;
+
+        if (sqlite3_exec(db, data::getAuditoriumTemplatesSQL().c_str(), 0, 0, &zErrMsg) != SQLITE_OK) {
+            std::cerr << "FATAL SQL ERROR (Seeding AuditoriumTemplates): " << zErrMsg << std::endl;
+            sqlite3_free(zErrMsg); return;
+        }
+        std::cout << "AuditoriumTemplates seeded successfully." << std::endl;
+
+        if (sqlite3_exec(db, data::getAuditoriumsSQL().c_str(), 0, 0, &zErrMsg) != SQLITE_OK) {
+            std::cerr << "FATAL SQL ERROR (Seeding Auditoriums): " << zErrMsg << std::endl;
+            sqlite3_free(zErrMsg); return;
+        }
+        std::cout << "Auditoriums seeded successfully." << std::endl;
+
+        if (sqlite3_exec(db, data::generateShowtimesSQL().c_str(), 0, 0, &zErrMsg) != SQLITE_OK) {
+            std::cerr << "FATAL SQL ERROR (Seeding Showtimes): " << zErrMsg << std::endl;
+            sqlite3_free(zErrMsg); return;
+        }
+        std::cout << "Showtimes seeded successfully." << std::endl;
+
+        if (sqlite3_exec(db, data::getBookingsSQL().c_str(), 0, 0, &zErrMsg) != SQLITE_OK) {
+            std::cerr << "FATAL SQL ERROR (Seeding Bookings): " << zErrMsg << std::endl;
+            sqlite3_free(zErrMsg); return;
+        }
+        std::cout << "Bookings seeded successfully." << std::endl;
     }
+
+    std::cout << "Database is ready." << std::endl;
+}
 
     std::cout << "Database is ready." << std::endl;
 }
@@ -229,7 +318,7 @@ int main()
         return crow::response(200, venues_json.dump());
     });
     CROW_ROUTE(app, "/movies/<int>")
-([](int movieID){
+    ([](int movieID){
     json movie_json;
     sqlite3_stmt* stmt;
     const char* sql_select = "SELECT MovieID, Title, PosterURL, Synopsis, DurationMinutes, Rating FROM Movies WHERE MovieID = ?";

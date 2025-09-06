@@ -80,31 +80,33 @@ VENUES_SQL = """
 """
 
 # --- UTILITY FUNCTIONS ---
-
 def parse_sql_insert(sql_string):
-    """Parses a raw SQL INSERT statement to extract the values."""
-    # Find all tuples of values, e.g., ('Title', 'URL', ...)
-    # This regex is robust enough to handle escaped quotes within the strings
-    pattern = re.compile(r"\(([^)]+)\)")
-    # This slices the string to start searching AFTER the first parenthesis,
-    # effectively skipping the "(Title, PosterURL, ...)" header part.
-    matches = pattern.findall(sql_string[sql_string.find('VALUES') + 6:])
-
-    records = []
-    for match in matches:
-        # Split by comma, but not commas inside quotes
-        values = re.split(r",(?=(?:[^']*'[^']*')*[^']*$)", match)
-        # Clean up whitespace and quotes
-        cleaned_values = [val.strip().strip("'") for val in values]
-        records.append(cleaned_values)
-    return records
+    # This now correctly skips the header line
+    try:
+        matches = re.findall(r"\(([^)]+)\)", sql_string[sql_string.find('('):])
+        records = []
+        for match in matches:
+            values = re.split(r",(?=(?:[^']*'[^']*')*[^']*$)", match)
+            cleaned_values = [val.strip().strip("'") for val in values]
+            records.append(cleaned_values)
+        return records
+    except Exception:
+        return []
 
 def sql_escape(value):
     """Escapes single quotes for SQL insertion."""
     if isinstance(value, str):
         return value.replace("'", "''")
     return value
-
+def cpp_string_escape(text):
+    """Escapes a string for use inside a C++ double-quoted literal."""
+    # 1. Escape backslashes first
+    text = text.replace('\\', '\\\\')
+    # 2. Escape double quotes
+    text = text.replace('"', '\\"')
+    # 3. Replace newlines with the \n character
+    text = text.replace('\n', '\\n')
+    return text
 # --- GENERATION FUNCTIONS ---
 
 def generate_users():
@@ -253,20 +255,22 @@ def generate_bookings(users, showtimes, auditoriums, templates):
     print(f"Successfully generated {len(bookings)} individual seat bookings.")
     return bookings
 
-def format_cpp_output(users, movies, venues, templates, auditoriums, showtimes, bookings):
-    print("Formatting data for C++ header file...")
+# In generate_master_seed.py
+
+def format_cpp_output(users, movies_sql, venues_sql, templates, auditoriums, showtimes, bookings):
+    print("Formatting data for C++ header file with individual functions...")
 
     # Build individual INSERT statements
-    users_sql = "INSERT INTO Users (UserID, Username, Email, Password) VALUES " + ", ".join([f"({u['id']}, '{sql_escape(u['username'])}', '{sql_escape(u['email'])}', '{u['password']}')" for u in users]) + ";"
-    templates_sql = "INSERT INTO AuditoriumTemplates (TemplateID, Description, PremiumRows, NormalRows, Section1Seats, Section2Seats, Section3Seats) VALUES " + ", ".join([f"({t['id']}, '{t['desc']}', {t['prem_rows']}, {t['norm_rows']}, {t['secs'][0]}, {t['secs'][1]}, {t['secs'][2]})" for t in templates]) + ";"
-    auditoriums_sql = "INSERT INTO Auditoriums (AuditoriumID, VenueID, AuditoriumNumber, TemplateID, NormalPrice, PremiumPrice) VALUES " + ", ".join([f"({a['id']}, {a['venue_id']}, {a['number']}, {a['template_id']}, {a['normal_price']:.2f}, {a['premium_price']:.2f})" for a in auditoriums]) + ";"
-    bookings_sql = "INSERT INTO Bookings (ShowtimeID, UserID, SeatIdentifier) VALUES " + ", ".join([f"({b['showtime_id']}, {b['user_id']}, '{b['seat']}')" for b in bookings]) + ";"
+    users_sql_str = "INSERT INTO Users (UserID, Username, Email, Password) VALUES " + ", ".join([f"({u['id']}, '{sql_escape(u['username'])}', '{sql_escape(u['email'])}', '{u['password']}')" for u in users]) + ";"
+    templates_sql_str = "INSERT INTO AuditoriumTemplates (TemplateID, Description, PremiumRows, NormalRows, Section1Seats, Section2Seats, Section3Seats) VALUES " + ", ".join([f"({t['id']}, '{t['desc']}', {t['prem_rows']}, {t['norm_rows']}, {t['secs'][0]}, {t['secs'][1]}, {t['secs'][2]})" for t in templates]) + ";"
+    auditoriums_sql_str = "INSERT INTO Auditoriums (AuditoriumID, VenueID, AuditoriumNumber, TemplateID, NormalPrice, PremiumPrice) VALUES " + ", ".join([f"({a['id']}, {a['venue_id']}, {a['number']}, {a['template_id']}, {a['normal_price']:.2f}, {a['premium_price']:.2f})" for a in auditoriums]) + ";"
+    bookings_sql_str = "INSERT INTO Bookings (ShowtimeID, UserID, SeatIdentifier) VALUES " + ", ".join([f"({b['showtime_id']}, {b['user_id']}, '{b['seat']}')" for b in bookings]) + ";"
 
     # Build the date-agnostic showtime vector
-    showtime_structs = ",\n".join([f"    {{{s['movie_id']}, {s['venue_id']}, {s['auditorium_id']}, {s['day_offset']}, \"{s['time']}\"}}" for s in showtimes])
+    showtime_structs = ",\\n".join([f"    {{{s['movie_id']}, {s['venue_id']}, {s['auditorium_id']}, {s['day_offset']}, \"{s['time']}\"}}" for s in showtimes])
     showtime_vector_string = f"static const std::vector<ShowtimeSeed> showtime_seeds = {{\n{showtime_structs}\n}};"
 
-    # Assemble the final C++ file
+    # Assemble the final C++ file with separate functions
     cpp_code = f"""#pragma once
 #include <string>
 #include <vector>
@@ -279,55 +283,37 @@ def format_cpp_output(users, movies, venues, templates, auditoriums, showtimes, 
 
 namespace data {{
 
-struct ShowtimeSeed {{
-    int movie_id;
-    int venue_id;
-    int auditorium_id;
-    int day_offset;
-    const char* time;
-}};
-
+struct ShowtimeSeed {{ int movie_id; int venue_id; int auditorium_id; int day_offset; const char* time; }};
 {showtime_vector_string}
+
+// Each function returns the SQL for a single table.
+static std::string getUsersSQL() {{ return R"({users_sql_str})"; }}
+static std::string getMoviesSQL() {{ return R"({movies_sql.strip()})"; }}
+static std::string getVenuesSQL() {{ return R"({venues_sql.strip()})"; }}
+static std::string getAuditoriumTemplatesSQL() {{ return R"({templates_sql_str})"; }}
+static std::string getAuditoriumsSQL() {{ return R"({auditoriums_sql_str})"; }}
+static std::string getBookingsSQL() {{ return R"({bookings_sql_str})"; }}
 
 static std::string generateShowtimesSQL() {{
     if (showtime_seeds.empty()) return "";
-    auto now = std::chrono::system_clock::now();
-    auto tt_now = std::chrono::system_clock::to_time_t(now);
-    std::tm tm_now = *std::localtime(&tt_now);
-    tm_now.tm_hour = 0; tm_now.tm_min = 0; tm_now.tm_sec = 0;
-    auto today = std::chrono::system_clock::from_time_t(std::mktime(&tm_now));
+    const auto today = std::chrono::floor<std::chrono::days>(std::chrono::system_clock::now());
     std::stringstream sql;
     sql << "INSERT INTO Showtimes (MovieID, VenueID, AuditoriumID, ShowtimeDateTime) VALUES ";
     for (size_t i = 0; i < showtime_seeds.size(); ++i) {{
         const auto& seed = showtime_seeds[i];
-        auto target_day = today + std::chrono::duration<int, std::ratio<86400>>(seed.day_offset);
-        std::time_t tt = std::chrono::system_clock::to_time_t(target_day);
-        std::tm tm = *std::localtime(&tt);
+        const auto target_day = today + std::chrono::days(seed.day_offset);
+        const std::chrono::year_month_day ymd{{target_day}};
         sql << "(" << seed.movie_id << ", " << seed.venue_id << ", " << seed.auditorium_id << ", "
-            << "'" << std::put_time(&tm, "%Y-%m-%d") << " " << seed.time << "')";
+            << "'" << static_cast<int>(ymd.year()) << "-" << std::setfill('0') << std::setw(2) << static_cast<unsigned>(ymd.month()) << "-" << std::setfill('0') << std::setw(2) << static_cast<unsigned>(ymd.day()) << " " << seed.time << "')";
         if (i < showtime_seeds.size() - 1) sql << ",\\n";
     }}
     sql << ";";
     return sql.str();
 }}
 
-// This function returns all other seed data as a single SQL string.
-static std::string generateAllSeedSQL() {{
-    std::stringstream sql;
-    sql << R"({MOVIES_SQL.strip()})";
-    sql << R"({VENUES_SQL.strip()})";
-    sql << R"({users_sql})";
-    sql << R"({templates_sql})";
-    sql << R"({auditoriums_sql})";
-    sql << generateShowtimesSQL();
-    sql << R"({bookings_sql})";
-    return sql.str();
-}}
-
 }} // namespace data
 """
     return cpp_code
-
 # --- MAIN EXECUTION ---
 if __name__ == "__main__":
     # 1. Parse input data
@@ -336,6 +322,12 @@ if __name__ == "__main__":
     if not movies_parsed or not venues_parsed:
         print("ERROR: MOVIES_SQL or VENUES_SQL is empty. Please paste your data into the script.")
     else:
+        # Skip the header row explicitly
+        movies_parsed = movies_parsed[1:]
+
+        # Debugging: Print parsed movies to verify header exclusion
+        print("Parsed Movies:", movies_parsed[:5])  # Print the first 5 entries for verification
+
         # 2. Generate all dynamic data
         users = generate_users()
         templates = generate_auditorium_templates()
@@ -344,7 +336,7 @@ if __name__ == "__main__":
         bookings = generate_bookings(users, showtimes, auditoriums, templates)
 
         # 3. Format the final C++ header file content
-        cpp_file_content = format_cpp_output(users, movies_parsed, venues_parsed, templates, auditoriums, showtimes, bookings)
+        cpp_file_content = format_cpp_output(users, MOVIES_SQL, VENUES_SQL, templates, auditoriums, showtimes, bookings)
 
         # 4. Write to file
         output_filename = "seed_data.hpp"

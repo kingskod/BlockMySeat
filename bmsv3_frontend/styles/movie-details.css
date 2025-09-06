@@ -43,7 +43,7 @@
     position: sticky;
     left:0;
     top: 70px;
-    height: calc(100vh - 110px);
+    height: fit-content;
     background-color: var(--bg-secondary);
     border-radius: var(--border-radius);
     box-shadow: 0 4px 12px var(--shadow-color);
