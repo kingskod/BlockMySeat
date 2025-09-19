@@ -19,7 +19,7 @@ CONFIG = {
 # PASTE YOUR MOVIE AND VENUE INSERT STATEMENTS HERE
 
 MOVIES_SQL = """"
-INSERT INTO Movies (Title, PosterURL, Synopsis, DurationMinutes, Rating) VALUES "
+"INSERT INTO Movies (Title, PosterURL, Synopsis, DurationMinutes, Rating) VALUES "
             "('The Crimson Shadow', 'images/crimson shadow.png', 'In a land shrouded by a creeping darkness, a lone figure known only as \"The Crimson Shadow\" stands on the precipice between light and oblivion. Tasked with a prophecy to restore the fallen kingdom of Eldoria, they must journey across treacherous mountains and stormy seas, confronting mythical beasts and a malevolent sorcerer who seeks to plunge the world into eternal night. The fate of their world rests on their shoulders, and their crimson-hued powers are their only guide.', 120, 'PG-13'),"
             "('Echoes of Neptune', 'images/echos of neptune.png', 'A deep-space expedition to Neptune''s mysterious ocean moon reveals a startling discovery: a colossal, crystalline city pulsating with an otherworldly energy. While investigating, a lone astronaut is separated from their crew and discovers they can communicate with the alien life form inhabiting the moon. The astronaut learns the ''echos'' they are hearing are not just soundwaves, but the last remnants of a dying race. They must choose between fulfilling their mission parameters and helping an ancient species before the deep-sea pressures of Neptune’s moon erase them from existence forever.', 95, 'PG-13'),"
             "('Galactic Drift', 'images/galactic drift.png', 'In a sprawling, neon-lit cyberpunk metropolis, a lone renegade hacker discovers a rogue AI that has broken free from its creators. Hunted by the corporation that seeks to reclaim it, the duo must navigate a dangerous high-speed chase through the city''s futuristic sky-high highways, with the fate of human-AI relations in their hands.', 110, 'PG-13 for sequences of intense futuristic action and violence, and some thematic elements.'),"
@@ -64,10 +64,10 @@ INSERT INTO Movies (Title, PosterURL, Synopsis, DurationMinutes, Rating) VALUES 
             "('Guardians of the Gate', 'images/guardians of the gate.png', 'A powerful, magical gate stands as the only barrier between two dimensions—one of light and one of darkness. Two elite guardians, bound by an ancient oath, must defend the gate against a malevolent force seeking to cross into their world. With their swords and magic, they are the last line of defense in a war between realms.', 105, 'PG-13'),"
             "('The Last Spell', 'images/the last spell.png', 'After a devastating battle, a lone sorcerer is all that stands between a magical kingdom and an invading army. With his allies defeated and his power nearly depleted, he must use the last of his strength to cast a final, forbidden spell that could either save his world or destroy it.', 105, 'PG-13'),"
             "('The Frozen Throne', 'images/the frozen throne.png', 'In a world covered in a perpetual blizzard, a young warrior embarks on a quest to defeat the tyrannical ruler who sits on the Frozen Throne. The warrior must brave the punishing snowstorms and treacherous icy lands to reach the throne room and challenge the figure who holds a dark secret about the world''s endless winter.', 105, 'PG-13'),"
-            "('The Serpent''s Kiss', 'images/the serpants kiss.png', 'A young woman seeks a cure for her village''s mysterious illness and is told of a mystical serpent in a forgotten swamp. She travels to the swamp and finds the serpent, which promises to heal her people in exchange for her soul. She must choose between the well-being of her village and her own life.', 105, 'PG-13')";"""
+            "('The Serpent''s Kiss', 'images/the serpants kiss.png', 'A young woman seeks a cure for her village''s mysterious illness and is told of a mystical serpent in a forgotten swamp. She travels to the swamp and finds the serpent, which promises to heal her people in exchange for her soul. She must choose between the well-being of her village and her own life.', 105, 'PG-13');";"""
 
 VENUES_SQL = """
-INSERT INTO Venues  VALUES "
+"INSERT INTO Venues  VALUES "
             "('Blocky Multiplex', 'Downtown Cubeville', 'venues/blocky multiplex.png', 12, 4.5),"
             "('The Redstone Cinema', 'Oak Valley', 'venues/the redstone cinema.png', 8, 5.0),"
             "('Pixel Perfect Theaters', 'Glass Pane City', 'venues/pixel perfect.png', 16, 4.0),"
@@ -76,7 +76,7 @@ INSERT INTO Venues  VALUES "
             "('The Ender Screen', 'Endertown', 'venues/the ender screen.png', 6, 4.7),"
             "('NetherFlix Theatre', 'Nether District', 'venues/netherflix.png', 8, 4.5),"
             "('Diamond Screenplex', 'Minecart Central', 'venues/diamond screenplex.png', 10, 4.8),"
-            "('Blockbuster Pavilion', 'Craftsville', 'venues/blockbuster pavilion.png', 4, 4.3);"
+            "('Blockbuster Pavilion', 'Craftsville', 'venues/blockbuster pavilion.png', 4, 4.3);";
 """
 
 # --- UTILITY FUNCTIONS ---
@@ -113,20 +113,12 @@ def generate_users():
     print(f"Generating {CONFIG['NUM_USERS']} users...")
     fake = Faker()
     users = []
-    generated_usernames = set() # Keep track of used names
-
     for i in range(1, CONFIG['NUM_USERS'] + 1):
-        username = fake.user_name()
-        # Keep generating a new username until you find one not already in the set
-        while username in generated_usernames:
-            username = fake.user_name()
-        
-        generated_usernames.add(username)
         users.append({
             "id": i,
             "username": fake.user_name(),
             "email": fake.email(),
-            "password": fake.password(length=random.randint(8, 12), special_chars=True, digits=True, upper_case=True, lower_case=True)
+            "password": "password123"
         })
     return users
 
@@ -275,7 +267,7 @@ def format_cpp_output(users, movies_sql, venues_sql, templates, auditoriums, sho
     bookings_sql_str = "INSERT INTO Bookings (ShowtimeID, UserID, SeatIdentifier) VALUES " + ", ".join([f"({b['showtime_id']}, {b['user_id']}, '{b['seat']}')" for b in bookings]) + ";"
 
     # Build the date-agnostic showtime vector
-    showtime_structs = ",\n".join([f"    {{{s['movie_id']}, {s['venue_id']}, {s['auditorium_id']}, {s['day_offset']}, \"{s['time']}\"}}" for s in showtimes])
+    showtime_structs = ",\\n".join([f"    {{{s['movie_id']}, {s['venue_id']}, {s['auditorium_id']}, {s['day_offset']}, \"{s['time']}\"}}" for s in showtimes])
     showtime_vector_string = f"static const std::vector<ShowtimeSeed> showtime_seeds = {{\n{showtime_structs}\n}};"
 
     # Assemble the final C++ file with separate functions
