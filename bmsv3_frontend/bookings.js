@@ -72,6 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Main Initialization ---
+    const searchBar = document.querySelector('.search-bar input');
+    let allBookings = { upcoming: [], previous: [] };
+
     const initializePage = async () => {
         const userId = sessionStorage.getItem('userId');
         /*if (!userId) {
@@ -83,10 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(`${serverUrl}/my-bookings/${userId}`);
             if (!response.ok) throw new Error('Could not fetch bookings');
-            const bookings = await response.json();
+            allBookings = await response.json();
 
-            populateList(upcomingList, bookings.upcoming);
-            populateList(previousList, bookings.previous);
+            populateList(upcomingList, allBookings.upcoming);
+            populateList(previousList, allBookings.previous);
 
         } catch (error) {
             console.error('Failed to load bookings:', error);
@@ -127,6 +130,22 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     initializePage();
+
+    searchBar.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+
+        const filteredUpcoming = allBookings.upcoming.filter(booking =>
+            booking.movie_title.toLowerCase().includes(searchTerm) ||
+            booking.venue_name.toLowerCase().includes(searchTerm)
+        );
+        populateList(upcomingList, filteredUpcoming);
+
+        const filteredPrevious = allBookings.previous.filter(booking =>
+            booking.movie_title.toLowerCase().includes(searchTerm) ||
+            booking.venue_name.toLowerCase().includes(searchTerm)
+        );
+        populateList(previousList, filteredPrevious);
+    });
 
     // --- Logout Prompt Logic ---
     
