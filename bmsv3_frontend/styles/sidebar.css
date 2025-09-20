@@ -8,8 +8,8 @@
 
 .icon {
     display: inline-block;
-    width: 24px;
-    height: 24px;
+    width: 32px; /* Increased width */
+    height: 32px; /* Increased height */
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
@@ -17,9 +17,23 @@
 .icon-home {
     background-image: url('../../icons/homeiconlight.png'); 
 }
+.icon-discover {
+    background-image: url('../../icons/fireday.png'); 
+}
+
 .night-mode .icon-home {
     background-image: url('../../icons/homeicondark.png'); 
 }
+.night-mode .icon-discover {
+    background-image: url('../../icons/firedark.png'); 
+}
+.icon-top-rated{
+    background-image: url('../../icons/top_rated.png');
+}
+.night-mode .icon-top-rated{
+    background-image: url('../../icons/top_rated.png');
+}
+
 /* --- Logo --- */
 .sidebar-logo {
     display: flex;
