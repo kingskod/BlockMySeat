@@ -45,8 +45,8 @@ void init_database() {
     const char* schemas[] = {
         "CREATE TABLE IF NOT EXISTS Users ("
         "UserID INTEGER PRIMARY KEY AUTOINCREMENT,"
-        "Username TEXT NOT NULL,"
-        "Email TEXT NOT NULL,"
+        "Username TEXT UNIQUE NOT NULL,"
+        "Email TEXT UNIQUE NOT NULL,"
         "Password TEXT NOT NULL,"
         "SessionToken TEXT);",
 
@@ -120,6 +120,8 @@ void init_database() {
     if (user_count == 0) {
         std::cout << "Database is empty. Seeding with master data..." << std::endl;
         
+        // --- THIS IS THE NEW DEBUGGING LOGIC ---
+        // We execute the seeding for each table one by one.
         
         if (sqlite3_exec(db, data::getUsersSQL().c_str(), 0, 0, &zErrMsg) != SQLITE_OK) {
             std::cerr << "FATAL SQL ERROR (Seeding Users): " << zErrMsg << std::endl;
@@ -163,6 +165,9 @@ void init_database() {
         }
         std::cout << "Bookings seeded successfully." << std::endl;
     }
+
+    std::cout << "Database is ready." << std::endl;
+}
 
     std::cout << "Database is ready." << std::endl;
 }
@@ -343,12 +348,8 @@ CROW_ROUTE(app, "/showtimes")
     auto movie_id_str = req.url_params.get("movie_id");
     auto date_str = req.url_params.get("date");
 
-    if (!movie_id_str) {
-        return crow::response(400, "Missing movie_id parameter");
-    }
-    if(!date_str)
-    {
-        return crow::response(400, "Missing date parameter");
+    if (!movie_id_str || !date_str) {
+        return crow::response(400, "Missing movie_id or date parameter");
     }
 
     // This SQL query is now correct because V.Rating exists.
@@ -467,7 +468,7 @@ CROW_ROUTE(app, "/occupied-seats")
 
     // ... (end of the /book-tickets route)
 
-// === NEW: /my-bookings ENDPOINT ===   
+// === NEW: /my-bookings ENDPOINT ===
 CROW_ROUTE(app, "/my-bookings/<int>")
 ([](int userId) {
     json response_json;
