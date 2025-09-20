@@ -20,6 +20,15 @@
 .icon-discover {
     background-image: url('../../icons/fireday.png'); 
 }
+.icon-top-rated{
+    background-image: url('../../icons/top_rated.png');
+}
+.icon-settings {
+    background-image: url('../../icons/settingsicon.png'); 
+}
+.icon-logout {
+    background-image: url('../../icons/logouticon.png'); 
+}
 
 .night-mode .icon-home {
     background-image: url('../../icons/homeicondark.png'); 
@@ -27,9 +36,7 @@
 .night-mode .icon-discover {
     background-image: url('../../icons/firedark.png'); 
 }
-.icon-top-rated{
-    background-image: url('../../icons/top_rated.png');
-}
+
 .night-mode .icon-top-rated{
     background-image: url('../../icons/top_rated.png');
 }
