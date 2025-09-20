@@ -108,6 +108,23 @@
     transition: background-color 0.3s;
     margin-right: 15px;
 }
+.featured-icon {
+    display: inline-block;
+    width: 48px;
+    height: 48px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+.icon-movies {
+    background-image: url('/icons/moviesicon.png');
+}
+.icon-venues {
+    background-image: url('/icons/venuesicon.png');
+}
+.icon-bookings {
+    background-image: url('/icons/bookingsicon.png');
+}
 
 .toggle-indicator {
     width: 22px;

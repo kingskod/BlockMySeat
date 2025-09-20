@@ -36,8 +36,8 @@
 
         <div class="header-right">
             <nav class="global-nav">
-                <a href="venues.html">Venues</a>
-                <a href="bookings.html">Bookings</a>
+                <a href="venues.html">Venues<i class="icon icon-venues"></i></a>
+                <a href="bookings.html">Bookings<i class="icon icon-bookings"></i> </a>
             </nav>
             <div class="header-profile">
                 <img src="images/user-avatar.png" alt="User Avatar">
@@ -63,13 +63,13 @@
                 <ul>
                     <!-- This now has its own unique class and is NOT a nav-link -->
                     <li class="sidebar-toggle-item">
-                        <span><i class="fa-solid fa-moon"></i> Dark Mode</span>
+                        <span><i class="icon icon-toggle"></i> Dark Mode</span>
                         <div class="theme-toggle" id="sidebar-theme-toggle">
                             <div class="toggle-indicator"></div>
                         </div>
                     </li>
                     <!-- The other links remain as they were -->
-                    <li><a href="#" class="nav-link"><i class="icon icon-settings"></i> Settings</a></li>
+                    <li><a href="#settings.html" class="nav-link"><i class="icon icon-settings"></i> Settings</a></li>
                     <li><a href="#" id="logout-button" class="nav-link"><i class="icon icon-logout"></i> Log out</a></li>
                 </ul>
             </div>
@@ -80,7 +80,9 @@
             
             <!-- Header for the main content (Title and Search) -->
             <header class="main-header-nav">
-                <h2 class="main-content-title">Movies</h2>
+                <div id="page header"> 
+                    <h2 class="main-content-title">Movies<i class="featured-icon icon-movies"></i></h2>
+                </div>
                 <!-- The header-actions div can be removed if it's now empty -->
             </header>
 
