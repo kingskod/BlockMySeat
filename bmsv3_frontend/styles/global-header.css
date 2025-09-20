@@ -96,8 +96,8 @@
     border: 2px solid var(--border-color);
 }
 .theme-toggle {
-    width: 52px;
-    height: 28px;
+    width: 35px;
+    height: 3px;
     background-image: linear-gradient(to right, #edf3b3, #2D3748); 
     border-radius: 50px;
     padding: 3px;

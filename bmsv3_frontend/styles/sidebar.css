@@ -109,8 +109,8 @@
 }
 
 .theme-toggle {
-    width: 52px;
-    height: 26px;
+    width: 35px;
+    height: 3px;
     background-image: linear-gradient(to right, #edf3b3, #2D3748); 
     border-radius: 50px;
     padding: 3px;
@@ -130,6 +130,7 @@
     background-position: center;
     background-repeat: no-repeat;
     transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transform: translateX(0)
 }
 .toggle-indicator::before {
     content: '';
