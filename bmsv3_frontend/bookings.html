@@ -24,8 +24,10 @@
             <div class="logo-text">BlockMySeat</div>
         </div>
         <div class="search-bar">
-            <input type="text" placeholder="Search...">
-            <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <div class="search-container">
+                <input type="text" placeholder="Search...">
+                <span class="search-icon custom-icon"></span>
+            </div>
         </div>
         <div class="header-right">
             <nav class="global-nav">
@@ -53,8 +55,7 @@
             </nav>
             <div class="sidebar-general">
                 <p class="nav-title">GENERAL</p>
-                <!-- In the sidebar-general div -->
-<!-- In the sidebar-general div -->
+                
                 <ul>
                     <!-- This now has its own unique class and is NOT a nav-link -->
                     <li class="sidebar-toggle-item">
@@ -75,13 +76,12 @@
             <section class="booking-section">
                 <h2 class="booking-section-title">Upcoming Bookings</h2>
                 <div id="upcoming-bookings-list" class="booking-list">
-                    <!-- Upcoming booking cards will be generated here -->
+
                 </div>
             </section>
             <section class="booking-section">
                 <h2 class="booking-section-title">Previous Bookings</h2>
                 <div id="previous-bookings-list" class="booking-list">
-                    <!-- Previous booking cards will be generated here -->
                 </div>
             </section>
         </main>
