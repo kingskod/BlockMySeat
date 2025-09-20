@@ -26,15 +26,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const body = document.body;
     const themeToggle = document.getElementById('sidebar-theme-toggle'); // Correct ID for the sidebar toggle
+    const homeIcon = document.getElementById('home-icon');
 
     // --- Dark Mode Logic (Complete and Correct) ---
     const applyTheme = (theme) => {
         if (theme === 'night') {
             body.classList.remove('day-mode');
             body.classList.add('night-mode');
+            if (homeIcon) homeIcon.src = '../icons/Lanter_night.webp';
         } else {
             body.classList.remove('night-mode');
             body.classList.add('day-mode');
+            if (homeIcon) homeIcon.src = '../icons/Lanter_day.webp';
         }
     };
 
