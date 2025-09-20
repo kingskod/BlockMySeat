@@ -75,6 +75,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     // fetch movies type shi
+    const searchBar = document.querySelector('.search-bar input');
+    let allMovies = [];
+
+    const renderMovies = (movies) => {
+        // Clear any static placeholder cards
+        const placeholders = movieGrid.querySelectorAll('.movie-card:not(#movie-card-template)');
+        placeholders.forEach(card => card.remove());
+
+        movies.forEach(movie => {
+            const newCard = cardTemplate.cloneNode(true);
+            newCard.removeAttribute('id');
+            newCard.style.display = 'block';
+
+            newCard.querySelector('.card-poster').src = movie.poster_url;
+            newCard.querySelector('.card-poster').alt = movie.title;
+            newCard.querySelector('.card-title').textContent = movie.title;
+            newCard.querySelector('.card-rating').textContent = `⭐ ${movie.rating}`;
+            newCard.querySelector('.card-genre').textContent = `${movie.duration_minutes} min`;
+            newCard.addEventListener('click', () => {
+                window.location.href = `movie-details.html?id=${movie.id}`;
+            });
+            movieGrid.appendChild(newCard);
+        });
+    };
 
     const fetchMovies = async () => {
         try {
@@ -82,27 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            const movies = await response.json();
-            
-            // Clear any static placeholder cards
-            const placeholders = movieGrid.querySelectorAll('.movie-card:not(#movie-card-template)');
-            placeholders.forEach(card => card.remove());
-
-            movies.forEach(movie => {
-                const newCard = cardTemplate.cloneNode(true);
-                newCard.removeAttribute('id');
-                newCard.style.display = 'block';
-
-                newCard.querySelector('.card-poster').src = movie.poster_url;
-                newCard.querySelector('.card-poster').alt = movie.title;
-                newCard.querySelector('.card-title').textContent = movie.title;
-                newCard.querySelector('.card-rating').textContent = `⭐ ${movie.rating}`;
-                newCard.querySelector('.card-genre').textContent = `${movie.duration_minutes} min`;
-                newCard.addEventListener('click', () => {
-                    window.location.href = `movie-details.html?id=${movie.id}`;
-                });
-                movieGrid.appendChild(newCard);
-            });
+            allMovies = await response.json();
+            renderMovies(allMovies);
 
         } catch (error) {
             console.error('Failed to fetch movies:', error);
@@ -111,6 +116,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     fetchMovies();
+
+    searchBar.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredMovies = allMovies.filter(movie => movie.title.toLowerCase().includes(searchTerm));
+        renderMovies(filteredMovies);
+    });
     const body = document.body;
     const themeToggle = document.getElementById('sidebar-theme-toggle'); // Correct ID for the sidebar toggle
 

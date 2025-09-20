@@ -92,6 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Fetch and Display Venue Data ---
     const venueListContainer = document.getElementById('venue-list-container');
     const venueTemplate = document.getElementById('venue-item-template');
+    const searchBar = document.querySelector('.search-bar input');
+    let allVenues = [];
 
     const createStarRating = (rating) => {
         let starsHTML = '';
@@ -106,29 +108,32 @@ document.addEventListener('DOMContentLoaded', () => {
         return starsHTML;
     };
 
-    const fetchVenues = async () => {
+    const renderVenues = (venues) => {
         if (!venueListContainer || !venueTemplate) return;
+        venueListContainer.innerHTML = '';
+        venueListContainer.appendChild(venueTemplate);
+
+        venues.forEach(venue => {
+            const newItem = venueTemplate.cloneNode(true);
+            newItem.removeAttribute('id');
+            newItem.style.display = 'grid';
+
+            newItem.querySelector('.venue-image').src = venue.image_url;
+            newItem.querySelector('.venue-name').textContent = venue.name;
+            newItem.querySelector('.venue-location').innerHTML = `<i class="fa-solid fa-map-marker-alt"></i> ${venue.location}`;
+            newItem.querySelector('.venue-auditoriums').innerHTML = `<i class="fa-solid fa-film"></i> ${venue.auditorium_count} Auditoriums`;
+            newItem.querySelector('.venue-rating').innerHTML = createStarRating(venue.rating);
+
+            venueListContainer.appendChild(newItem);
+        });
+    };
+
+    const fetchVenues = async () => {
         try {
             const response = await fetch('http://127.0.0.1:18080/venues');
             if (!response.ok) throw new Error('Network response was not ok');
-            const venues = await response.json();
-            
-            venueListContainer.innerHTML = ''; 
-            venueListContainer.appendChild(venueTemplate);
-
-            venues.forEach(venue => {
-                const newItem = venueTemplate.cloneNode(true);
-                newItem.removeAttribute('id');
-                newItem.style.display = 'grid';
-
-                newItem.querySelector('.venue-image').src = venue.image_url;
-                newItem.querySelector('.venue-name').textContent = venue.name;
-                newItem.querySelector('.venue-location').innerHTML = `<i class="fa-solid fa-map-marker-alt"></i> ${venue.location}`;
-                newItem.querySelector('.venue-auditoriums').innerHTML = `<i class="fa-solid fa-film"></i> ${venue.auditorium_count} Auditoriums`;
-                newItem.querySelector('.venue-rating').innerHTML = createStarRating(venue.rating);
-
-                venueListContainer.appendChild(newItem);
-            });
+            allVenues = await response.json();
+            renderVenues(allVenues);
         } catch (error) {
             console.error('Failed to fetch venues:', error);
             venueListContainer.innerHTML = '<p style="color: var(--text-primary);">Could not load venues. Is the C++ server running?</p>';
@@ -136,4 +141,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     fetchVenues();
+
+    searchBar.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredVenues = allVenues.filter(venue => venue.name.toLowerCase().includes(searchTerm));
+        renderVenues(filteredVenues);
+    });
 });
