@@ -1,7 +1,8 @@
 .main-content-title {
+    display: flex; /* Make it a flex container */
+    align-items: center; /* Vertically center items */
     font-size: 1.8em;
     color: var(--text-primary);
     margin: 0;
-    /* Add some padding to align it nicely with the content below */
     padding: 0 10px; 
 }
