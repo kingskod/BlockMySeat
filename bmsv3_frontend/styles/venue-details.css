@@ -1,0 +1,87 @@
+/* This file styles the main layout of the venue-details page */
+
+.details-page-container {
+    display: grid;
+    /* Fixed panel is now on the LEFT, and the main content is on the RIGHT */
+    grid-template-columns: 380px 1fr; 
+    gap: 40px;
+    padding: var(--padding-main);
+    margin-top: 70px; /* Account for fixed header */
+    align-items: start; /* Ensure proper alignment */
+}
+
+/* --- Main Scrolling Content (Right) --- */
+.movies-content { /* Changed class from showtimes-content */
+    grid-column: 2 / 3; 
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: stretch; /* Ensure movie cards stretch properly */
+}
+
+.dates-bar {
+    display: flex;
+    gap: 10px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border-color);
+    overflow-x: auto;
+}
+/* ... (date-item styles are the same as before) ... */
+.date-item { display: flex; flex-direction: column; align-items: center; padding: 10px 15px; border-radius: var(--border-radius); cursor: pointer; border: 2px solid transparent; transition: background-color 0.2s, border-color 0.2s; }
+.date-item:hover { background-color: var(--bg-tertiary); }
+.date-item.active { background-color: var(--bg-tertiary); border-color: var(--text-accent); }
+.date-day { font-size: 0.9em; font-weight: 500; color: var(--text-secondary); }
+.date-number { font-size: 1.5em; font-weight: bold; color: var(--text-primary); }
+
+
+/* --- Fixed Venue Info Panel (Left) --- */
+.venue-info-panel-fixed { /* Changed class from movie-info-panel-fixed */
+    grid-column: 1 / 2; 
+    position: sticky;
+    left:0;
+    top: 70px;
+    height: fit-content;
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 12px var(--shadow-color);
+    align-self: start; /* Ensure movie details align properly */
+}
+
+#venue-poster { /* Changed ID from movie-poster */
+    width: 100%;
+    height: 350px; /* Adjusted height for venue posters */
+    object-fit: cover;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.venue-info-details { /* Changed class from movie-info-details */
+    padding: var(--padding-main);
+}
+
+#venue-name { /* Changed ID from movie-title */
+    font-size: 2em;
+    color: var(--text-primary);
+    margin: 0 0 10px 0;
+}
+.venue-info-details .info-meta { /* Targeting the meta info specifically */
+    display: flex;
+    gap: 15px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+#venue-location { /* New style for location */
+    font-size: 1.1em;
+    color: var(--text-secondary);
+    margin: 0 0 10px 0;
+}
+
+#venue-rating { /* New style for rating stars */
+    color: var(--text-accent); /* Use accent color for stars */
+    font-size: 1.1em;
+}
+
+#venue-auditoriums { /* New style for auditorium count */
+    font-size: 1.1em;
+}

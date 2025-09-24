@@ -71,14 +71,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (rowIndex < audiDetails.layout.premium_rows) {
                     totalPrice += audiDetails.premium_price;
-                    priceBreakdown.push(`$${audiDetails.premium_price.toFixed(2)}`);
+                    priceBreakdown.push(`${audiDetails.premium_price.toFixed(2)}`);
                 } else {
                     totalPrice += audiDetails.normal_price;
-                    priceBreakdown.push(`$${audiDetails.normal_price.toFixed(2)}`);
+                    priceBreakdown.push(`${audiDetails.normal_price.toFixed(2)}`);
                 }
             });
             document.getElementById('price-breakdown').textContent = priceBreakdown.join(' + ');
-            document.getElementById('total-price').textContent = `$${totalPrice.toFixed(2)}`;
+            document.getElementById('total-price').textContent = `${totalPrice.toFixed(2)}`;
 
         } catch (error) {
             console.error("Could not fetch auditorium details:", error);

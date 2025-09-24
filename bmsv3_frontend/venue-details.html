@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlockMySeat - Venue Details</title>
+    
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/global-header.css">
+    <link rel="stylesheet" href="styles/venue-details.css"> <!-- LINK TO NEW CSS -->
+    <link rel="stylesheet" href="styles/movie-showtimes.css"> <!-- LINK TO NEW CSS for movie cards with showtimes -->
+    
+</head>
+<body class="day-mode">
+
+    <!-- 1. Global Header -->
+    <header class="global-header">
+        <div class="header-logo">
+            <a href="movies.html" class="logo-text">BlockMySeat</a>
+        </div>
+        <div class="header-right">
+            <div class="theme-toggle" id="theme-toggle">
+                <div class="toggle-indicator"></div>
+            </div>
+            <nav class="global-nav">
+                <a href="movies.html">Movies<i class="icon icon-movies"></i></a>
+                <a href="venues.html">Venues<i class="icon icon-venues"></i></a>
+                <a href="bookings.html">Bookings<i class="icon icon-bookings"></i></a>
+            </nav>
+            <div class="header-profile">
+                <img src="images/user-avatar.png" alt="User Avatar">
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. Main Details Page Container -->
+    <div class="details-page-container">
+
+        <!-- Left Side: Fixed Venue Info Panel -->
+        <aside class="venue-info-panel-fixed">
+            <img src="" alt="Venue Image" id="venue-poster"> 
+            <div class="venue-info-details"> 
+                <h1 id="venue-name">Loading...</h1> 
+                <p id="venue-location" class="info-meta"></p> 
+                <div class="info-meta">
+                    <span id="venue-auditoriums"></span> 
+                    <span class="separator">|</span>
+                    <span id="venue-rating"></span> 
+                </div>
+               
+            </div>
+        </aside>
+        
+        
+        <main class="movies-content"> 
+            <div class="dates-bar">
+               
+            </div>
+            <div class="movie-list" id="movie-list"> 
+            </div>
+        </main>
+    </div>
+
+   
+    <div class="movie-showtime-item" id="movie-item-template" style="display: none;"> 
+        <img src="" alt="Movie Poster" class="movie-image">
+        <div class="movie-main-content">
+            <div class="movie-header"> 
+                <h2 class="movie-name">Movie Title</h2>
+                <div class="movie-meta">
+                    <span class="movie-duration"></span>
+                    <span class="separator">|</span>
+                    <span class="movie-rating"></span>
+                </div>
+            </div>
+            <hr class="movie-divider"> 
+            <p class="movie-synopsis"></p> 
+            <div class="movie-timings">
+               
+            </div>
+        </div>
+    </div>
+
+    <script src="venue-details.js"></script> 
+</body>
+</html>

@@ -80,7 +80,7 @@
 }
 .global-nav a {
     display: flex; /* Make it a flex container */
-    vertical-align: middle;
+    vertical-align: middlegi;
     align-items: center; /* Vertically center items */
     gap: 5px; /* Add some space between text and icon */
     text-decoration: none;

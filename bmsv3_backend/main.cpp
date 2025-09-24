@@ -289,7 +289,8 @@ int main()
     });
 
     CROW_ROUTE(app, "/venues").methods("GET"_method)
-    ([](){
+    ([]()
+    {
         json venues_json = json::array();
         sqlite3_stmt* stmt;
         const char* sql_select = "SELECT VenueID, Name, Location, ImageURL, AuditoriumCount, Rating FROM Venues";
@@ -311,6 +312,98 @@ int main()
         sqlite3_finalize(stmt);
 
         return crow::response(200, venues_json.dump());
+    });
+
+    CROW_ROUTE(app, "/venues/<int>")
+    ([](int venueID){
+        json venue_json;
+        sqlite3_stmt* stmt;
+        const char* sql_select = "SELECT VenueID, Name, Location, ImageURL, AuditoriumCount, Rating FROM Venues WHERE VenueID = ?";
+
+        if (sqlite3_prepare_v2(db, sql_select, -1, &stmt, 0) == SQLITE_OK) {
+            sqlite3_bind_int(stmt, 1, venueID);
+            if (sqlite3_step(stmt) == SQLITE_ROW) {
+                venue_json["id"] = sqlite3_column_int(stmt, 0);
+                venue_json["name"] = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+                venue_json["location"] = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+                venue_json["image_url"] = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+                venue_json["auditorium_count"] = sqlite3_column_int(stmt, 4);
+                venue_json["rating"] = sqlite3_column_double(stmt, 5);
+            }
+        }
+        sqlite3_finalize(stmt);
+
+        if (venue_json.is_null()) {
+            return crow::response(404, "Venue not found");
+        }
+        return crow::response(200, venue_json.dump());
+    });
+    CROW_ROUTE(app, "/venue-showtimes")
+    ([](const crow::request& req){
+        auto venue_id_str = req.url_params.get("venue_id");
+        auto date_str = req.url_params.get("date");
+
+        if (!venue_id_str) {
+            return crow::response(400, "Missing venue_id parameter");
+        }
+        if(!date_str) {
+            return crow::response(400, "Missing date parameter");
+        }
+
+        std::string sql = "SELECT "
+                          "  M.MovieID, M.Title, M.PosterURL, M.DurationMinutes, M.Rating, M.Synopsis, "
+                          "  strftime('%H:%M', S.ShowtimeDateTime), S.ShowtimeID, S.AuditoriumID "
+                          "FROM Showtimes AS S "
+                          "JOIN Movies AS M ON S.MovieID = M.MovieID "
+                          "WHERE S.VenueID = ? AND S.ShowtimeDateTime LIKE ? || '%' "
+                          "ORDER BY M.MovieID, S.ShowtimeDateTime";
+        
+        sqlite3_stmt* stmt;
+        json movies_with_showtimes = json::object();
+        int rc;
+
+        if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, 0) != SQLITE_OK) {
+            std::cerr << "SQL PREPARE ERROR: " << sqlite3_errmsg(db) << std::endl;
+            return crow::response(500, "Database query preparation failed");
+        }
+
+        sqlite3_bind_int(stmt, 1, std::stoi(venue_id_str));
+        sqlite3_bind_text(stmt, 2, date_str, -1, SQLITE_STATIC);
+
+        while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+            int movie_id = sqlite3_column_int(stmt, 0);
+            std::string movie_id_key = std::to_string(movie_id);
+
+            if (movies_with_showtimes.find(movie_id_key) == movies_with_showtimes.end()) {
+                movies_with_showtimes[movie_id_key]["movie_id"] = movie_id;
+                movies_with_showtimes[movie_id_key]["movie_title"] = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+                movies_with_showtimes[movie_id_key]["poster_url"] = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+                movies_with_showtimes[movie_id_key]["duration_minutes"] = sqlite3_column_int(stmt, 3);
+                movies_with_showtimes[movie_id_key]["rating"] = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+                movies_with_showtimes[movie_id_key]["synopsis"] = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5));
+                movies_with_showtimes[movie_id_key]["showtimes"] = json::array();
+            }
+            
+            json showtime_obj;
+            showtime_obj["time"] = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 6));
+            showtime_obj["showtime_id"] = sqlite3_column_int(stmt, 7);
+            showtime_obj["auditorium_id"] = sqlite3_column_int(stmt, 8);
+
+            movies_with_showtimes[movie_id_key]["showtimes"].push_back(showtime_obj);
+        }
+
+        if (rc != SQLITE_DONE) {
+            std::cerr << "SQL EXECUTION ERROR: " << sqlite3_errmsg(db) << std::endl;
+        }
+
+        sqlite3_finalize(stmt);
+
+        json final_response = json::array();
+        for (auto& el : movies_with_showtimes.items()) {
+            final_response.push_back(el.value());
+        }
+
+        return crow::response(200, final_response.dump());
     });
     CROW_ROUTE(app, "/movies/<int>")
     ([](int movieID){

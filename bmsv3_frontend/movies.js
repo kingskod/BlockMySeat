@@ -84,6 +84,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const movies = await response.json();
             
+            // --- Populate Carousel ---
+            const carouselSlides = document.querySelectorAll('.carousel-slide');
+            movies.slice(0, carouselSlides.length).forEach((movie, index) => {
+                const slide = carouselSlides[index];
+                slide.querySelector('.featured-bg').src = movie.poster_url;
+                slide.querySelector('.featured-title').textContent = movie.title;
+                const bookButton = slide.querySelector('.btn-primary');
+                bookButton.href = `movie-details.html?id=${movie.id}`;
+            });
+
+            // --- Populate Movie Grid ---
             // Clear any static placeholder cards
             const placeholders = movieGrid.querySelectorAll('.movie-card:not(#movie-card-template)');
             placeholders.forEach(card => card.remove());

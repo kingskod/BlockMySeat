@@ -1,0 +1,101 @@
+/* This file styles the movie+showtimes list item on the venue details page */
+
+.movie-list { /* Changed class from venue-list */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.movie-showtime-item { /* Changed class from venue-showtime-item */
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.movie-image { /* Changed class from venue-image */
+    width: 100px; /* Movie posters are typically narrower */
+    height: 150px; /* Adjusted height for movie posters */
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    flex-shrink: 0;
+}
+
+.movie-main-content { /* Changed class from venue-main-content */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.movie-header { /* Changed class from venue-header */
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.movie-name { /* Changed class from venue-name */
+    margin: 0;
+    font-size: 1.4em;
+    color: var(--text-primary);
+    flex-grow: 1; /* Allow title to take space */
+}
+
+.movie-meta { /* New container for movie duration and rating */
+    display: flex;
+    gap: 10px;
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    flex-shrink: 0;
+    margin-left: 20px;
+}
+.movie-rating {
+    color: var(--text-accent); /* Accent color for the text rating */
+}
+
+
+.movie-divider { /* Changed class from venue-divider */
+    width: 100%;
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 3px 0; /* Space above and below the line */
+}
+
+.movie-synopsis { /* New style for movie synopsis */
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    /* Limit height and add ellipsis if needed */
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Show up to 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.movie-timings { /* Changed class from venue-timings */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.time-btn {
+    padding: 8px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: transparent;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.time-btn:hover {
+    background-color: var(--text-accent);
+    color: var(--bg-secondary);
+    border-color: var(--text-accent);
+}
