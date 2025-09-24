@@ -64,20 +64,31 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // 3. Calculate Price
             let totalPrice = 0;
-            let priceBreakdown = [];
+            let premiumSeats = 0;
+            let normalSeats = 0;
+
             seats.forEach(seatId => {
                 const rowLetter = seatId.charAt(0);
                 const rowIndex = rowLetter.charCodeAt(0) - 65;
                 
                 if (rowIndex < audiDetails.layout.premium_rows) {
-                    totalPrice += audiDetails.premium_price;
-                    priceBreakdown.push(`${audiDetails.premium_price.toFixed(2)}`);
+                    premiumSeats++;
                 } else {
-                    totalPrice += audiDetails.normal_price;
-                    priceBreakdown.push(`${audiDetails.normal_price.toFixed(2)}`);
+                    normalSeats++;
                 }
             });
-            document.getElementById('price-breakdown').textContent = priceBreakdown.join(' + ');
+
+            let priceBreakdownParts = [];
+            if (premiumSeats > 0) {
+                totalPrice += premiumSeats * audiDetails.premium_price;
+                priceBreakdownParts.push(`${premiumSeats} x ${audiDetails.premium_price.toFixed(2)}`);
+            }
+            if (normalSeats > 0) {
+                totalPrice += normalSeats * audiDetails.normal_price;
+                priceBreakdownParts.push(`${normalSeats} x ${audiDetails.normal_price.toFixed(2)}`);
+            }
+
+            document.getElementById('price-breakdown').textContent = priceBreakdownParts.join(' + ');
             document.getElementById('total-price').textContent = `${totalPrice.toFixed(2)}`;
 
         } catch (error) {
