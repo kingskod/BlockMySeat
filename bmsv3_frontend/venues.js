@@ -107,33 +107,49 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const fetchVenues = async () => {
-        if (!venueListContainer || !venueTemplate) return;
-        try {
-            const response = await fetch('http://127.0.0.1:18080/venues');
-            if (!response.ok) throw new Error('Network response was not ok');
-            const venues = await response.json();
-            
-            venueListContainer.innerHTML = ''; 
-            venueListContainer.appendChild(venueTemplate);
+    if (!venueListContainer || !venueTemplate) return;
+    try {
+        const response = await fetch('http://127.0.0.1:18080/venues');
+        if (!response.ok) throw new Error('Network response was not ok');
+        const venues = await response.json();
 
-            venues.forEach(venue => {
-                const newItem = venueTemplate.cloneNode(true);
-                newItem.removeAttribute('id');
-                newItem.style.display = 'grid';
+        venueListContainer.innerHTML = '';
+        venueListContainer.appendChild(venueTemplate); // Keep the template hidden
 
-                newItem.querySelector('.venue-image').src = venue.image_url;
-                newItem.querySelector('.venue-name').textContent = venue.name;
-                newItem.querySelector('.venue-location').innerHTML = `<i class="fa-solid fa-map-marker-alt"></i> ${venue.location}`;
-                newItem.querySelector('.venue-auditoriums').innerHTML = `<i class="fa-solid fa-film"></i> ${venue.auditorium_count} Auditoriums`;
-                newItem.querySelector('.venue-rating').innerHTML = createStarRating(venue.rating);
+        venues.forEach(venue => {
+            const newItem = venueTemplate.cloneNode(true);
+            newItem.removeAttribute('id');
+            newItem.style.display = 'grid';
 
-                venueListContainer.appendChild(newItem);
+            newItem.querySelector('.venue-image').src = venue.image_url;
+            newItem.querySelector('.venue-name').textContent = venue.name;
+            newItem.querySelector('.venue-location').innerHTML = `<i class="fa-solid fa-map-marker-alt"></i> ${venue.location}`;
+            newItem.querySelector('.venue-auditoriums').innerHTML = `<i class="fa-solid fa-film"></i> ${venue.auditorium_count} Auditoriums`;
+            newItem.querySelector('.venue-rating').innerHTML = createStarRating(venue.rating);
+
+            // --- NEW CODE STARTS HERE ---
+            // Make the entire card clickable
+            newItem.addEventListener('click', () => {
+                window.location.href = `venue-details.html?id=${venue.id}`;
             });
-        } catch (error) {
-            console.error('Failed to fetch venues:', error);
-            venueListContainer.innerHTML = '<p style="color: var(--text-primary);">Could not load venues. Is the C++ server running?</p>';
-        }
-    };
 
+            // Get the "See Showtimes" button and set its href directly
+            // This ensures the button itself is also a link, even if the card is clicked.
+            const seeShowtimesBtn = newItem.querySelector('.btn-primary');
+            if (seeShowtimesBtn) {
+                seeShowtimesBtn.href = `venue-details.html?id=${venue.id}`;
+                // Optional: Prevent immediate redirection if the button is clicked,
+                // letting the card's click handler manage it, or vice versa.
+                // For now, both will point to the same URL.
+            }
+            // --- NEW CODE ENDS HERE ---
+
+            venueListContainer.appendChild(newItem);
+        });
+    } catch (error) {
+        console.error('Failed to fetch venues:', error);
+        venueListContainer.innerHTML = '<p style="color: var(--text-primary);">Could not load venues. Is the C++ server running?</p>';
+    }
+};
     fetchVenues();
 });

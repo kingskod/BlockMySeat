@@ -104,13 +104,21 @@
     transform: translateY(-50%);
     z-index: 4; /* On top of everything */
     background-color: rgba(0, 0, 0, 0.5);
-    color: white;
+    /* Remove or comment out 'color' and 'font-size' as they are for text */
+    /* color: white; */ 
     border: none;
-    font-size: 2em;
-    padding: 10px 15px;
+    /* font-size: 2em; */
+    /* padding: 10px 15px; */ /* This padding is no longer needed with fixed width/height */
+    width: 50px;   /* Set a fixed width for your button */
+    height: 50px;  /* Set a fixed height for your button */
     border-radius: var(--border-radius);
     cursor: pointer;
     transition: background-color 0.2s;
+
+    /* Add common background image properties */
+    background-size: 70%; /* Adjust image size within the button as needed */
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .carousel-button:hover {
@@ -119,8 +127,10 @@
 
 .carousel-button.prev {
     left: 15px;
+    background-image: url('../../icons/arrow_left.jpeg'); /* Update this path to your left arrow image */
 }
 
 .carousel-button.next {
     right: 15px;
+    background-image: url('../../icons/arrow_right.jpeg'); /* Update this path to your right arrow image */
 }

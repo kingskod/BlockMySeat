@@ -13,19 +13,22 @@
 }
 
 /* === DAY MODE (Light Theme) === */
+/* === DAY MODE (Light Theme) === */
 .day-mode {
     --bg-primary: #E0F2E9;
     --bg-secondary: #FFFFFF;
-    --bg-tertiary: #E5E7EB; 
-    
+    --bg-tertiary: #E5E7EB;
+
     --text-primary: #3A3A3A;
     --text-secondary: #707070;
     --text-accent: #D97706;
 
     --border-color: #D1D5DB;
     --shadow-color: rgba(0, 0, 0, 0.1);
+
+    /* --- NEW: Global Day Mode Background Image --- */
+    --global-bg-image: url('../images/daybg.png');
 }
-/* === DAY MODE (Light Theme) === */
 
 /* === NIGHT MODE (Dark Theme) === */
 .night-mode {
@@ -40,18 +43,26 @@
     --border-color: #475569;
     --shadow-color: rgba(0, 0, 0, 0.4);
 
-    /* Example of a texture */
-    --background-image: url('../images/stone_background_night.png'); /* Placeholder */
+    /* --- NEW: Global Night Mode Background Image --- */
+    --global-bg-image: url('../images/nightbg.png');
 }
 
 /* Basic body setup to use the theme variables */
 body {
     font-family: var(--font-family-main);
-    background-color: var(--bg-primary);
+    background-color: var(--bg-primary); /* Keep this as a fallback */
     color: var(--text-primary);
     margin: 0;
     transition: background-color 0.3s, color 0.3s;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+
+    /* --- NEW: Apply the global background image --- */
+    background-image: var(--global-bg-image);
+    background-size: cover;          /* Cover the entire viewport */
+    background-position: center;     /* Center the image */
+    background-repeat: repeat;    
+    background-attachment: fixed;    /* Keep background fixed when scrolling */
+    transition: background-image 0.5s ease-in-out; /* Smooth transition for background image */
 }
