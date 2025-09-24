@@ -33,6 +33,8 @@
             <nav class="global-nav">
                 <a href="movies.html">Movies<i class="icon icon-movies"></i></a>
                 <a href="venues.html">Venues<i class="icon icon-venues"></i></a>
+                <a href="movies.html">Movies<i class="icon icon-movies"></i></a>
+                <a href="venues.html">Venues<i class="icon icon-venues"></i></a>
             </nav>
             <div class="header-profile">
                 <img src="images/user-avatar.png" alt="User Avatar">
@@ -50,20 +52,26 @@
                 <ul>
                     <li><a href="bookings.html" class="nav-link active"><i class="icon icon-home"></i> Home</a></li>
                     <li><a href="bookings.html/top-rated" class="nav-link"><i class="icon icon-top-rated"></i> Top Rated</a></li>
+                    <li><a href="bookings.html" class="nav-link active"><i class="icon icon-home"></i> Home</a></li>
+                    <li><a href="bookings.html/top-rated" class="nav-link"><i class="icon icon-top-rated"></i> Top Rated</a></li>
                 </ul>
             </nav>
             <div class="sidebar-general">
                 <p class="nav-title">GENERAL</p>
                 
+                
                 <ul>
                     <!-- This now has its own unique class and is NOT a nav-link -->
                     <li class="sidebar-toggle-item">
+                        <span><i class="icon icon-toggle"></i> Dark Mode</span>
                         <span><i class="icon icon-toggle"></i> Dark Mode</span>
                         <div class="theme-toggle" id="sidebar-theme-toggle">
                             <div class="toggle-indicator"></div>
                         </div>
                     </li>
                     <!-- The other links remain as they were -->
+                    <li><a href="settings.html" class="nav-link"><i class="icon icon-settings"></i> Settings</a></li>
+                    <li><a href="#" id="logout-button" class="nav-link"><i class="icon icon-logout"></i> Log out</a></li>
                     <li><a href="settings.html" class="nav-link"><i class="icon icon-settings"></i> Settings</a></li>
                     <li><a href="#" id="logout-button" class="nav-link"><i class="icon icon-logout"></i> Log out</a></li>
                 </ul>
@@ -75,6 +83,7 @@
             <section class="booking-section">
                 <h2 class="booking-section-title">Upcoming Bookings</h2>
                 <div id="upcoming-bookings-list" class="booking-list">
+
 
                 </div>
             </section>
