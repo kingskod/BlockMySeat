@@ -4,6 +4,26 @@
     display: flex;
     flex-direction: column;
     gap: 40px;
+    /* --- OLD BACKGROUND STYLES (Remove or comment out) --- */
+    /* background-image: url('../images/backgrounds/stone_wall_moss.png'); */
+    /* background-repeat: repeat; */
+    /* background-size: auto; */
+    /* ----------------------------------------------------- */
+    background-blend-mode: multiply; /* Keep this for blending with theme colors */
+    background-color: var(--bg-secondary); /* Keep this as a fallback and for blending */
+}
+/* --- NEW: Day Mode Sidebar Background --- */
+.day-mode .sidebar {
+    background-image: url('../images/stone wall light.png');
+    background-repeat: repeat;
+    background-size: 200px; /* Or specify a size like '100px' */
+}
+
+/* --- NEW: Night Mode Sidebar Background --- */
+.night-mode .sidebar {
+    background-image: url('../images/stone wall.png');
+    background-repeat: repeat;
+    background-size: 200px; /* Or specify a size like '100px' */
 }
 .featured-icon {
     display: inline-block;
@@ -72,7 +92,7 @@
 }
 .nav-title {
     font-size: var(--font-size-small);
-    color: var(--text-secondary);
+    color: #ffffff;
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 15px;
@@ -91,11 +111,11 @@
 .nav-link {
     display: flex;
     align-items: center;
-    gap: 15px; /* This creates the space between the icon and text */
+    gap: 15px;
     padding: 12px 15px;
     border-radius: var(--border-radius);
     text-decoration: none;
-    color: var(--text-secondary);
+    color: #ffffff;
     font-weight: 500;
     transition: background-color 0.2s, color 0.2s;
 }
@@ -123,10 +143,10 @@
 /* This is a NEW, SEPARATE rule just for the toggle container */
 .sidebar-toggle-item {
     display: flex;
-    justify-content: space-between; /* This pushes the text and toggle apart */
+    justify-content: space-between;
     align-items: center;
     padding: 12px 15px;
-    color: var(--text-secondary);
+    color: #ffffff;
     font-weight: 500;
 }
 .sidebar-toggle-item span {
