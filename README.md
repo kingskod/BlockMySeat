@@ -1,5 +1,3 @@
-
-
 # BlockMySeat: A MINECRAFT Themed C++ Movie Booking System
 
 BlockMySeat is a web-based movie ticket booking application featuring a C++ backend and a vanilla JavaScript frontend. It allows users to sign up, log in, browse movies and venues, and select seats for a showtime.
@@ -195,9 +193,9 @@ This page requires a `movie_id` to know which movie to display.
 This page requires the most parameters to function correctly.
 
 
-*   **Test Case:** For "Minecraft: The First Movie" (`movie_id=1`), at a showtime with `showtime_id=1` in `auditorium_id=2` on a specific date and time.
+*   **Test Case:** For "The Alchemist's Secret" (`movie_id=1`), at a showtime with `showtime_id=1` in `auditorium_id=1` on a specific date and time.
     ```
-    file:///E:/BlockMySeat/bmsv3/bmsv3_frontend/seats.html?movie=Minecraft%3A%20The%20First%20Movie&showtime_id=1&auditorium_id=2&date=2025-08-22&time=17%3A00
+    file:///E:/BlockMySeat/bmsv3/bmsv3_frontend/seats.html?movie=The%20Alchemist%27s%20Secret&venue=The%20Redstone%20Reel&poster=images%2Fthe%20alchemists%20secret.png&showtime_id=1&auditorium_id=1&date=2025-09-24&time=16%3A15
     ```
 
 #### **6. Confirmation Page**

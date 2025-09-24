@@ -117,13 +117,13 @@
     background-size: contain;
 }
 .icon-movies {
-    background-image: url('/icons/moviesicon.png');
+    background-image: url('../../icons/moviesicon.png');
 }
 .icon-venues {
-    background-image: url('/icons/venuesicon.png');
+    background-image: url('../../icons/venuesicon.png');
 }
 .icon-bookings {
-    background-image: url('/icons/bookingsicon.png');
+    background-image: url('../../icons/bookingsicon.png');
 }
 
 .toggle-indicator {

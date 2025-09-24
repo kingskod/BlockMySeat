@@ -184,6 +184,8 @@ document.addEventListener('DOMContentLoaded', () =>
                         const params = new URLSearchParams(
                         {
                             movie: movieTitle.textContent,
+                            venue: venue.venue_name, // Pass venue name
+                            poster: moviePoster.src, // Pass movie poster URL
                             showtime_id: showtime.showtime_id,
                             auditorium_id: showtime.auditorium_id,
                             date: selectedDate,

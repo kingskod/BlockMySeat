@@ -89,9 +89,16 @@ document.addEventListener('DOMContentLoaded', () => {
             populateList(previousList, bookings.previous);
 
         } catch (error) {
-            console.error('Failed to load bookings:', error);
+            console.error('Failed to load bookings:', error); // Keep the console error for debugging
+            
+            // New, Minecraft-themed error message
+            const themedErrorMessage = `<p>Oops! Your bookings seem to be lost in the Nether. Please try refreshing, or check if the server is running. (${error.message || 'Unknown error'})</p>`;
+
             if (upcomingList) {
-                upcomingList.innerHTML = "<p>Could not load your bookings.</p>";
+                upcomingList.innerHTML = themedErrorMessage;
+            }
+            if (previousList) { // Also apply to the previous bookings list
+                previousList.innerHTML = themedErrorMessage;
             }
         }
     };
