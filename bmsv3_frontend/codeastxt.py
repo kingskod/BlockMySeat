@@ -48,7 +48,7 @@ process_files_in_directory(styles_dir, ['.css'])
 html_js_files_to_process = [
     'bookings.html', 'bookings.js', 'confirmation.html', 'confirmation.js',
     'index.html', 'index.js', 'movie-details.html', 'movie-details.js',
-    'movies.html', 'movies.js', 'seats.html', 'seats.js',
+    'movies.html', 'movies.js', 'seats.html', 'seats.js','venue-details.html', 'venue-details.js',
     'venues.html', 'venues.js'
 ]
 

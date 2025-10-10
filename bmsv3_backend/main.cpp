@@ -445,10 +445,11 @@ CROW_ROUTE(app, "/showtimes")
     }
 
     // This SQL query is now correct because V.Rating exists.
-    std::string sql = "SELECT V.VenueID, V.Name, V.Rating, V.ImageURL, strftime('%H:%M', S.ShowtimeDateTime), S.ShowtimeID, S.AuditoriumID "
-                      "FROM Showtimes AS S JOIN Venues AS V ON S.VenueID = V.VenueID "
-                      "WHERE S.MovieID = ? AND S.ShowtimeDateTime LIKE ? || '%' "
-                      "ORDER BY V.VenueID, S.ShowtimeDateTime";
+    std::string sql = "SELECT V.VenueID, V.Name AS VenueName, V.Rating AS VenueRating, V.ImageURL AS VenueImageURL, "
+                  "strftime('%H:%M', S.ShowtimeDateTime) AS Time, S.ShowtimeID, S.AuditoriumID "
+                  "FROM Showtimes AS S JOIN Venues AS V ON S.VenueID = V.VenueID "
+                  "WHERE S.MovieID = ? AND DATE(S.ShowtimeDateTime) = ? " 
+                  "ORDER BY V.VenueID, S.ShowtimeDateTime";
     
     sqlite3_stmt* stmt;
     json venues_with_showtimes = json::object();
